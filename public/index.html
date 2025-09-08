@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot Agricultura</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="chatbot-container" id="chatbot">
+      <!-- Encabezado -->
+      <div class="chatbot-header">
+        <div class="chatbot-header-left">
+          <div class="chatbot-icon">A</div>
+          <span class="chatbot-name">AgroBot</span>
+        </div>
+        <div class="chatbot-header-buttons">
+          <button id="refreshChat" title="Refrescar">⟳</button>
+          <button id="closeChat" title="Minimizar">✕</button>
+        </div>
+      </div>
+
+      <!-- Ventana de mensajes -->
+      <div class="chatbot-messages" id="chat-window">
+        <!-- Mensajes se insertarán aquí desde script.js -->
+      </div>
+
+      <!-- Input -->
+      <div class="chatbot-input" id="chat-input">
+        <!-- Íconos debajo -->
+        <div class="chat-input-icons">
+          <button class="emoji-btn" title="Emoji">
+            <img src="iconos/feliz.png" alt="Emoji" />
+          </button>
+          <button class="attach-btn" title="Adjuntar">
+            <img src="iconos/Clip.png" alt="Adjuntar" />
+          </button>
+        </div>
+
+        <!-- Burbuja del campo de texto con botón de enviar -->
+        <div class="chat-input-bubble">
+          <input
+            type="text"
+            id="userInput"
+            placeholder="Escribe tu consulta..."
+          />
+          <button class="send-btn" onclick="sendMessage()" title="Enviar">
+            ➤
+          </button>
+        </div>
+      </div>
+    </div>
+    <img src="iconos/IconoWhatsapp.png" id="whatsapp-btn" alt="Abrir chat" />
+    <script src="script.js"></script>
+  </body>
+</html>

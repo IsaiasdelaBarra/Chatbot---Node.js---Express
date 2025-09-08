@@ -1,0 +1,239 @@
+/* Contenedor principal del chatbot */
+.chatbot-container {
+  display: none;
+  flex-direction: column; /* asegura estructura vertical */
+  position: fixed;
+  bottom: 60px;  /* encima del botón */
+  right: 110px;
+  width: 350px;
+  height: 500px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 1000;
+  overflow: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Chatbot visible */
+.chatbot-container.is-open {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mueve el cuadro de chat en la pagina */
+.chatbot-container:active {
+  cursor: grabbing;
+}
+
+/* Encabezado */
+.chatbot-header {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chatbot-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chatbot-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #7b3aed; /* color morado */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+}
+
+.chatbot-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.chatbot-header-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.chatbot-header-buttons button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Contenedor de mensajes en columna */
+.chatbot-messages {
+  flex: 1;                         /* se expande en el espacio disponible */
+  padding: 16px;
+  overflow-y: auto;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;                        /* separación entre burbujas */
+}
+
+/* Mensajes del bot (izquierda) */
+.bot {
+  align-self: flex-start;
+  background: #fff;
+  padding: 10px 14px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  margin-bottom: 4px;
+  max-width: 80%;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+}
+
+/* Mensajes del usuario (derecha) */
+.user {
+  align-self: flex-end;
+  background: #7b3aed;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 14px;
+  margin-bottom: 4px;
+  max-width: 70%;
+  font-size: 14px;
+}
+
+
+/* Contenedor general del input */
+/* Input: siempre abajo */
+.chatbot-input {
+  border-top: 1px solid #eee;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  gap: 8px;
+}
+
+
+/* Burbuja del input */
+.chat-input-bubble {
+  width: 90%;
+  background: #f7f7f7;
+  border-radius: 20px;
+  padding: 6px 12px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chat-input-bubble input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+}
+
+/* Botón enviar dentro de la burbuja */
+.chat-input-bubble .send-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #7b3aed;
+  margin-left: 8px;
+}
+
+/* Íconos debajo */
+.chat-input-icons {
+  display: flex;
+  justify-content: left;
+  gap: 10px;
+  width: 100%;
+}
+
+.chat-input-icons button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.chat-input-icons button:hover {
+  color: #7b3aed;
+}
+
+.emoji-btn,
+.attach-btn {
+  width: 25px;        /* ancho fijo */
+  height: 25px;       /* alto fijo */
+  display: flex;      /* para centrar el contenido */
+  justify-content: left;
+}
+
+
+/* Boton de WhatsApp flotante */
+#whatsapp-btn {
+  position: fixed;
+  bottom: 50px;
+  right: 30px;
+  width: 70px;       /* tamaño del ícono */
+  height: 70px;
+  cursor: pointer;
+  z-index: 1001;     /* encima del chat */
+  transition: transform 0.2s;
+}
+
+#whatsapp-btn:hover {
+  transform: scale(1.1); /* efecto al pasar el mouse */
+}
+
+/* Inicialmente el chatbot oculto */
+/* por defecto oculto */
+.chatbot-container { display: none; }
+/* visible al abrir */
+.chatbot-container.is-open { display: flex; }
+
+/* ----------------------------------- */
+/* ----------------------------------- */
+/* ----------------------------------- */
+
+/* Opciones en el Chatbot al inicio */
+
+
+/* Opciones centradas */
+.chat-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+.chat-option {
+  background: #7b3aed;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: center;
+  max-width: 80%;
+  transition: background 0.2s;
+}
+.chat-option:hover { background: #5a26b5; }
+
