@@ -1,10 +1,9 @@
-//Lecto de PDF y Word.
+// Lector de PDF y Word.
 
 import fs from "fs";
 import path from "path";
 import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
-import { loadDocuments, getLaws } from "./loaders/parseDocs.js";
 
 const DOCS_DIR = path.join(process.cwd(), "documents");
 
@@ -31,7 +30,7 @@ export async function loadDocuments() {
 
       documents.push({
         titulo: path.basename(file, ext),
-        contenido: text.replace(/\s+/g, " ").trim()
+        contenido: text.replace(/\s+/g, " ").trim(),
       });
     } catch (err) {
       console.error(`Error leyendo ${file}:`, err);
@@ -41,26 +40,26 @@ export async function loadDocuments() {
   return documents;
 }
 
-// Formato para el listado de las leyes
-
-
+// -------------------- Extracción de leyes --------------------
 export function getLaws(documents, leyEspecifica = null) {
   // Combinar todos los documentos en un solo string
-  const allText = documents.map(d => d.contenido).join(" ");
+  const allText = documents.map((d) => d.contenido).join(" ");
 
-  // Separar las leyes usando regex: detecta "Ley <número> (...) :"
-  const regex = /(Ley\s+\d+\.\d+\s*\([^)]+\):\s*.*?)(?=Ley\s+\d+\.|$)/g;
-  const leyes = allText.match(regex)?.map(l => l.trim()) || [];
+  // Regex flexible para soportar "Ley 27.118" o "Ley 27118"
+  const regex =
+    /(Ley\s+\d+(?:\.\d+)?\s*\([^)]+\):\s*.*?)(?=Ley\s+\d+(?:\.\d+)?\s*\(|$)/gis;
+
+  const leyes = allText.match(regex)?.map((l) => l.trim()) || [];
 
   if (!leyes.length) return "No se encontraron leyes en los documentos.";
 
   if (leyEspecifica) {
-    // Buscar la ley específica por número o palabra clave
-    const encontrada = leyes.find(l => l.toLowerCase().includes(leyEspecifica.toLowerCase()));
+    // Normalizamos: quitamos todo lo que no sean dígitos
+    const num = leyEspecifica.replace(/\D/g, "");
+    const encontrada = leyes.find((l) => l.replace(/\D/g, "").includes(num));
+
     return encontrada || `No se encontró la ley "${leyEspecifica}".`;
   } else {
-    // Devolver todas las leyes separadas por un salto de línea
     return leyes.join("\n\n");
   }
 }
-

@@ -4,7 +4,8 @@ const chatbot = document.querySelector(".chatbot-container");
 const whatsappBtn = document.getElementById("whatsapp-btn");
 
 let chatInitialized = false;
-let waitingForOption = false;
+let waitingForLawOption = false; // Esperando que el usuario elija "una ley específica" o "todas"
+let waitingForLawInput = false;  // Esperando que escriba el número/título de la ley
 
 // -------------------- Envío de mensajes --------------------
 async function sendMessage() {
@@ -14,15 +15,30 @@ async function sendMessage() {
   addMessage(text, "user");
   userInput.value = "";
 
-  // Detectamos si el usuario quiere opciones de asesor o leyes
+  // ⚡ Si estamos esperando que el usuario escriba el número/título de la ley
+  if (waitingForLawInput) {
+    waitingForLawInput = false;
+    await fetchSpecificLaw(text);
+    return;
+  }
+
+  // Asesor
   if (/asesor/i.test(text)) {
     showAdvisorOptions();
     return;
   }
 
-  if (/leyes|ley/i.test(text)) {
-    waitingForOption = true;
-    showLawsOptions();
+  // Leyes: solo palabras clave "ley" o "leyes"
+  if (/^ley(es)?$/i.test(text)) {
+    waitingForLawOption = true;
+    showLawsChoice();
+    return;
+  }
+
+  // Ley específica: detecta "Ley 27.118" o "Ley 27118"
+  const leyMatch = text.match(/ley\s+(\d+\.?\d*)/i);
+  if (leyMatch) {
+    await fetchSpecificLaw(leyMatch[1]);
     return;
   }
 
@@ -34,23 +50,16 @@ async function sendMessage() {
       body: JSON.stringify({ message: text }),
     });
 
-    if (!response.ok) {
-      // Para testing sin API Key, mostramos el mensaje de error y salimos
-      throw new Error("API key no válida o suspendida");
-    }
+    if (!response.ok) throw new Error("API key no válida o suspendida");
 
     const data = await response.json();
     addMessage(data.reply, "bot");
   } catch (err) {
     console.error(err);
-    // Mensaje de prueba si la API Key no está habilitada
     addMessage(
       "❌ Problemas al contactarse con la IA (mensaje de prueba sin API Key)",
       "bot"
     );
-  } finally {
-    // Reiniciamos el flag para permitir futuras interacciones
-    waitingForOption = false;
   }
 }
 
@@ -68,11 +77,16 @@ let isDragging = false;
 let offsetX = 0;
 let offsetY = 0;
 
-chatbot.addEventListener("mousedown", (e) => {
+// Seleccionamos el header
+const header = document.querySelector(".chatbot-header");
+
+// Inicia arrastre solo desde el header
+header.addEventListener("mousedown", (e) => {
   isDragging = true;
-  offsetX = e.clientX - chatbot.getBoundingClientRect().left;
-  offsetY = e.clientY - chatbot.getBoundingClientRect().top;
-  chatbot.style.cursor = "grabbing";
+  const rect = chatbot.getBoundingClientRect();
+  offsetX = e.clientX - rect.left;
+  offsetY = e.clientY - rect.top;
+  header.style.cursor = "grabbing"; // cursor mientras arrastramos
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -85,7 +99,7 @@ document.addEventListener("mousemove", (e) => {
 
 document.addEventListener("mouseup", () => {
   isDragging = false;
-  chatbot.style.cursor = "grab";
+  header.style.cursor = "grab"; // vuelve a grab cuando soltamos
 });
 
 // -------------------- Botón de WhatsApp --------------------
@@ -104,7 +118,6 @@ if (whatsappBtn && chatbot) {
 
 // -------------------- Mensaje de bienvenida --------------------
 function showWelcomeMessage() {
-  if (!chatWindow) return;
   addMessage(
     "¡Hola! 👋 Bienvenido al AgroBot del Ministerio de Agricultura. ¿Qué deseas hacer?",
     "bot"
@@ -113,8 +126,6 @@ function showWelcomeMessage() {
 
 // -------------------- Opciones de asesor --------------------
 function showAdvisorOptions() {
-  waitingForOption = true;
-
   const optionsContainer = document.createElement("div");
   optionsContainer.className = "chat-options";
 
@@ -123,7 +134,6 @@ function showAdvisorOptions() {
   optWhatsapp.textContent = "📲 Contactate con un asesor por Whatsapp";
   optWhatsapp.addEventListener("click", () => {
     window.open("https://wa.me/549XXXXXXXXXX", "_blank");
-    waitingForOption = false;
     optionsContainer.remove();
   });
 
@@ -133,52 +143,27 @@ function showAdvisorOptions() {
 }
 
 // -------------------- Opciones de leyes --------------------
-// Pregunta si quiere una ley o todas
-async function showLawsOptions() {
-  addMessage("¿Deseas consultar una ley en particular o todas las leyes?", "bot");
-
+function showLawsChoice() {
   const optionsContainer = document.createElement("div");
   optionsContainer.className = "chat-options";
 
-  // Botón "Una ley específica"
   const oneOption = document.createElement("div");
   oneOption.className = "chat-option";
   oneOption.textContent = "Una ley específica";
-
   oneOption.addEventListener("click", () => {
     optionsContainer.remove();
-    addMessage("¿Cuál ley desearías consultar? Escribe el título o número de la ley:", "bot");
-
-    // Activamos flag para que el siguiente mensaje del usuario sea interpretado como ley
-    waitingForOption = "specificLaw";
+    waitingForLawOption = false;
+    waitingForLawInput = true;
+    addMessage("📝 Escribí el número o título de la ley que deseas consultar:", "bot");
   });
 
-  // Botón "Todas las leyes"
   const allOption = document.createElement("div");
   allOption.className = "chat-option";
   allOption.textContent = "Todas las leyes";
-
   allOption.addEventListener("click", async () => {
     optionsContainer.remove();
-    try {
-      const res = await fetch("/api/leyes/todas");
-      const allLaws = await res.json();
-
-      if (!allLaws.length) {
-        addMessage("No se encontraron leyes 📂", "bot");
-        return;
-      }
-
-      let allContent = "";
-      allLaws.forEach(ley => {
-        allContent += `<b>${ley.titulo}</b>: ${ley.contenido.replace(/\n/g,"<br>")}<br><br>`;
-      });
-
-      addMessage(allContent, "bot");
-    } catch (err) {
-      console.error(err);
-      addMessage("❌ Hubo un problema al cargar las leyes.", "bot");
-    }
+    waitingForLawOption = false;
+    await fetchAllLaws();
   });
 
   optionsContainer.appendChild(oneOption);
@@ -187,22 +172,59 @@ async function showLawsOptions() {
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
+// -------------------- Funciones de leyes --------------------
+async function fetchAllLaws() {
+  try {
+    const res = await fetch("/api/leyes/todas");
+    const allLaws = await res.json();
 
+    if (!allLaws.length) {
+      addMessage("📂 No se encontraron leyes.", "bot");
+      return;
+    }
 
-// -------------------- Acciones de botones --------------------
+    let allContent = "";
+    allLaws.forEach((ley) => {
+      allContent += `<b>${ley.titulo}</b>: ${ley.contenido.replace(/\n/g, "<br>")}<br><br>`;
+    });
 
+    addMessage(allContent, "bot");
+  } catch (err) {
+    console.error(err);
+    addMessage("❌ Hubo un problema al cargar las leyes.", "bot");
+  }
+}
+
+async function fetchSpecificLaw(titulo) {
+  try {
+    const res = await fetch(`/api/leyes/${encodeURIComponent(titulo)}`);
+    const data = await res.json();
+
+    if (data.error) {
+      addMessage(`⚠️ ${data.error}`, "bot");
+    } else {
+      addMessage(
+        `<b>${data.titulo}</b>: ${data.contenido.replace(/\n/g, "<br>")}`,
+        "bot"
+      );
+    }
+  } catch (err) {
+    console.error(err);
+    addMessage("❌ Hubo un problema al consultar la ley.", "bot");
+  }
+}
+
+// -------------------- Botones de refrescar y minimizar --------------------
 document.addEventListener("DOMContentLoaded", () => {
   const refreshBtn = document.getElementById("refreshChat");
   const closeBtn = document.getElementById("closeChat");
   const chatContainer = document.getElementById("chatbot");
 
-  // Refrescar
   refreshBtn.addEventListener("click", () => {
-    chatWindow.innerHTML = ""; // 👈 limpiamos el contenedor correcto
-    showWelcomeMessage(); // 👈 mostramos el mensaje de inicio
+    chatWindow.innerHTML = "";
+    showWelcomeMessage();
   });
 
-  // Minimizar
   closeBtn.addEventListener("click", () => {
     if (!chatContainer) return;
     chatContainer.classList.remove("is-open");

@@ -26,7 +26,7 @@
 
 /* Mueve el cuadro de chat en la pagina */
 .chatbot-container:active {
-  cursor: grabbing;
+  cursor: default;
 }
 
 /* Encabezado */
@@ -37,6 +37,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor:grab;
 }
 
 .chatbot-header-left {
@@ -49,7 +50,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #7b3aed; /* color morado */
+  background: #25a53a; /* color verde */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -104,7 +105,7 @@
 /* Mensajes del usuario (derecha) */
 .user {
   align-self: flex-end;
-  background: #7b3aed;
+  background: #25a53a;
   color: #fff;
   padding: 10px 14px;
   border-radius: 14px;
@@ -153,7 +154,7 @@
   border: none;
   cursor: pointer;
   font-size: 20px;
-  color: #7b3aed;
+  color: #25a53a;
   margin-left: 8px;
 }
 
@@ -175,7 +176,7 @@
 }
 
 .chat-input-icons button:hover {
-  color: #7b3aed;
+  color: #25a53a;
 }
 
 .emoji-btn,
@@ -225,7 +226,7 @@
   margin: 10px 0;
 }
 .chat-option {
-  background: #7b3aed;
+  background: #25a53a;
   color: #fff;
   padding: 10px 16px;
   border-radius: 20px;

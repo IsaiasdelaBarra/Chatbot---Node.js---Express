@@ -1,5 +1,4 @@
 import express from "express";
-import fetch from "node-fetch";
 import dotenv from "dotenv";
 import path from "path";
 import { loadDocuments, getLaws } from "./loaders/parseDocs.js";
@@ -17,15 +16,16 @@ let cachedDocs = [];
   console.log(`Documentos legales cargados: ${cachedDocs.length}`);
 })();
 
-// ENDPOINT CHAT
+// -------------------- ENDPOINT CHAT --------------------
 app.post("/chat", async (req, res) => {
   try {
-    // Verificamos si la API Key está definida
     if (!process.env.API_KEY) {
-      return res.status(401).json({ reply: "❌ Problemas al contactarse con la IA (API Key no habilitada)" });
+      return res
+        .status(401)
+        .json({ reply: "❌ Problemas al contactarse con la IA (API Key no habilitada)" });
     }
 
-    // Aquí iría tu lógica real de llamar a Gemini, por ejemplo:
+    // Aquí iría tu lógica real de llamar a la IA
     // const userMessage = req.body.message;
     // const iaResponse = await callGeminiAPI(userMessage);
     // res.json({ reply: iaResponse });
@@ -36,46 +36,14 @@ app.post("/chat", async (req, res) => {
   }
 });
 
-// ENDPOINTS LEYES
-app.get("/api/leyes", (req, res) => {
-  try {
-    if (!cachedDocs.length) return res.json([]);
-
-    const allLaws = getLaws(cachedDocs).split("\n\n");
-    const titles = allLaws.map(l => {
-      const match = l.match(/Ley\s+\d+\.\d+\s*\([^)]+\)/);
-      return match ? match[0] : "Ley desconocida";
-    });
-
-    res.json(titles);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json([]);
-  }
-});
-
-
-app.get("/api/leyes/:titulo", (req, res) => {
-  const { titulo } = req.params;
-
-  // Busca la ley específica usando getLaws
-  const ley = getLaws(cachedDocs, titulo);
-
-  if (ley) {
-    res.json({ titulo, contenido: ley });
-  } else {
-    res.status(404).json({ error: "Ley no encontrada" });
-  }
-});
-
-// ENDPOINT TODAS LAS LEYES
+// -------------------- ENDPOINT TODAS LAS LEYES --------------------
 app.get("/api/leyes/todas", (req, res) => {
   try {
     if (!cachedDocs.length) return res.status(200).json([]);
 
     const allLaws = getLaws(cachedDocs).split("\n\n");
-    const formattedLaws = allLaws.map(l => {
-      const match = l.match(/Ley\s+\d+\.\d+\s*\([^)]+\)/);
+    const formattedLaws = allLaws.map((l) => {
+      const match = l.match(/Ley\s+\d+(?:\.\d+)?\s*\([^)]+\)/);
       const titulo = match ? match[0] : "Ley desconocida";
       return { titulo, contenido: l };
     });
@@ -87,7 +55,20 @@ app.get("/api/leyes/todas", (req, res) => {
   }
 });
 
-// SERVIR FRONTEND
+// -------------------- ENDPOINT LEY ESPECÍFICA --------------------
+app.get("/api/leyes/:titulo", (req, res) => {
+  const { titulo } = req.params;
+
+  const ley = getLaws(cachedDocs, titulo);
+
+  if (ley) {
+    res.json({ titulo, contenido: ley });
+  } else {
+    res.status(404).json({ error: `Ley "${titulo}" no encontrada` });
+  }
+});
+
+// -------------------- SERVIR FRONTEND --------------------
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -99,7 +80,7 @@ app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// LEVANTAR SERVIDOR
+// -------------------- LEVANTAR SERVIDOR --------------------
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
