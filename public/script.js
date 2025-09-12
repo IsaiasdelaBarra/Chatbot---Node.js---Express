@@ -15,10 +15,41 @@ async function sendMessage() {
   addMessage(text, "user");
   userInput.value = "";
 
-  // ⚡ Si estamos esperando que el usuario escriba el número/título de la ley
+  // ⚡ Si estamos esperando que elija entre "una" o "todas"
+  if (waitingForLawOption) {
+    addMessage("⚠️ Por favor selecciona una de las opciones antes de continuar.", "bot");
+    showLawsChoice(); // volvemos a mostrar botones
+    return;
+  }
+
+  // ⚡ Si estamos esperando que escriba el número/título de la ley
   if (waitingForLawInput) {
-    waitingForLawInput = false;
-    await fetchSpecificLaw(text);
+    // Si el usuario quiere volver a elegir
+    if (/otra|volver|menu/i.test(text)) {
+      waitingForLawInput = false;
+      showLawsChoice();
+      return;
+    }
+
+    let leyNumber = null;
+
+    // Detectar si el texto contiene "Ley 27.118" o solo el número con o sin punto
+    const leyMatch = text.match(/ley\s+(\d+\.?\d*)/i);
+    if (leyMatch) {
+      leyNumber = leyMatch[1].replace(/\./g, ""); // quitamos puntos
+    } else if (/^\d+\.?\d*$/.test(text)) {
+      leyNumber = text.replace(/\./g, ""); // quitamos puntos
+    }
+
+    if (leyNumber) {
+      waitingForLawInput = false;
+      await fetchSpecificLaw(leyNumber);
+    } else {
+      addMessage(
+        "⚠️ No entendí el número o título de la ley. Escribí algo como 'Ley 27.118' o solo el número.",
+        "bot"
+      );
+    }
     return;
   }
 
@@ -38,7 +69,7 @@ async function sendMessage() {
   // Ley específica: detecta "Ley 27.118" o "Ley 27118"
   const leyMatch = text.match(/ley\s+(\d+\.?\d*)/i);
   if (leyMatch) {
-    await fetchSpecificLaw(leyMatch[1]);
+    await fetchSpecificLaw(leyMatch[1].replace(/\./g, ""));
     return;
   }
 
@@ -214,6 +245,8 @@ async function fetchSpecificLaw(titulo) {
   }
 }
 
+
+
 // -------------------- Botones de refrescar y minimizar --------------------
 document.addEventListener("DOMContentLoaded", () => {
   const refreshBtn = document.getElementById("refreshChat");
@@ -238,3 +271,60 @@ userInput.addEventListener("keydown", (event) => {
     sendMessage();
   }
 });
+
+// -------------------- Redimensionar el chat --------------------
+
+const handles = document.querySelectorAll(".resize-handle");
+let isResizing = false;
+let currentHandle = null;
+
+handles.forEach(handle => {
+  handle.addEventListener("mousedown", (e) => {
+    isResizing = true;
+    currentHandle = handle.classList[1]; // ej: "top", "bottomright"
+    document.body.style.userSelect = "none"; // evita selección de texto
+    e.preventDefault();
+  });
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!isResizing) return;
+
+  const rect = chatbot.getBoundingClientRect();
+  let newWidth = rect.width;
+  let newHeight = rect.height;
+  let newLeft = rect.left;
+  let newTop = rect.top;
+
+  if (currentHandle.includes("right")) {
+    newWidth = e.clientX - rect.left;
+  }
+  if (currentHandle.includes("left")) {
+    newWidth = rect.right - e.clientX;
+    newLeft = e.clientX;
+  }
+  if (currentHandle.includes("bottom")) {
+    newHeight = e.clientY - rect.top;
+  }
+  if (currentHandle.includes("top")) {
+    newHeight = rect.bottom - e.clientY;
+    newTop = e.clientY;
+  }
+
+  // Respetar límites
+  if (newWidth > 250 && newWidth < window.innerWidth * 0.9) {
+    chatbot.style.width = newWidth + "px";
+    chatbot.style.left = newLeft + "px";
+  }
+  if (newHeight > 300 && newHeight < window.innerHeight * 0.9) {
+    chatbot.style.height = newHeight + "px";
+    chatbot.style.top = newTop + "px";
+  }
+});
+
+document.addEventListener("mouseup", () => {
+  isResizing = false;
+  currentHandle = null;
+  document.body.style.userSelect = "auto";
+});
+
