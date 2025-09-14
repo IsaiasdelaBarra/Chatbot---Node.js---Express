@@ -42,21 +42,36 @@ export async function loadDocuments() {
 
 // -------------------- Extracción de leyes --------------------
 export function getLaws(documents, leyEspecifica = null) {
-  // Combinar todos los documentos en un solo string
   const allText = documents.map((d) => d.contenido).join(" ");
 
-  // Regex flexible para soportar "Ley 27.118" o "Ley 27118"
+  // Regex para extraer leyes y sus nombres
   const regex =
     /(Ley\s+\d+(?:\.\d+)?\s*\([^)]+\):\s*.*?)(?=Ley\s+\d+(?:\.\d+)?\s*\(|$)/gis;
 
   const leyes = allText.match(regex)?.map((l) => l.trim()) || [];
-
   if (!leyes.length) return "No se encontraron leyes en los documentos.";
 
   if (leyEspecifica) {
-    // Normalizamos: quitamos todo lo que no sean dígitos
-    const num = leyEspecifica.replace(/\D/g, "");
-    const encontrada = leyes.find((l) => l.replace(/\D/g, "").includes(num));
+    const query = leyEspecifica.toLowerCase().replace(/\s+/g, " ").trim();
+
+    // Normaliza número de ley (quita puntos y espacios)
+    const numQuery = query.replace(/\D/g, "");
+
+    // Busca por número (con/sin puntos)
+    let encontrada =
+      leyes.find(
+        (l) =>
+          l.toLowerCase().replace(/\D/g, "").includes(numQuery) &&
+          numQuery.length > 0
+      ) ||
+      // Busca por nombre dentro del paréntesis
+      leyes.find((l) => {
+        const nombreMatch = l.match(/\(([^)]+)\)/);
+        if (!nombreMatch) return false;
+        return nombreMatch[1].toLowerCase().includes(query);
+      }) ||
+      // Busca por nombre en todo el texto de la ley
+      leyes.find((l) => l.toLowerCase().includes(query));
 
     return encontrada || `No se encontró la ley "${leyEspecifica}".`;
   } else {

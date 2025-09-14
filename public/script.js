@@ -24,34 +24,18 @@ async function sendMessage() {
 
   // ⚡ Si estamos esperando que escriba el número/título de la ley
   if (waitingForLawInput) {
-    // Si el usuario quiere volver a elegir
-    if (/otra|volver|menu/i.test(text)) {
-      waitingForLawInput = false;
-      showLawsChoice();
-      return;
-    }
-
-    let leyNumber = null;
-
-    // Detectar si el texto contiene "Ley 27.118" o solo el número con o sin punto
-    const leyMatch = text.match(/ley\s+(\d+\.?\d*)/i);
-    if (leyMatch) {
-      leyNumber = leyMatch[1].replace(/\./g, ""); // quitamos puntos
-    } else if (/^\d+\.?\d*$/.test(text)) {
-      leyNumber = text.replace(/\./g, ""); // quitamos puntos
-    }
-
-    if (leyNumber) {
-      waitingForLawInput = false;
-      await fetchSpecificLaw(leyNumber);
-    } else {
-      addMessage(
-        "⚠️ No entendí el número o título de la ley. Escribí algo como 'Ley 27.118' o solo el número.",
-        "bot"
-      );
-    }
+  // Si el usuario quiere volver a elegir
+  if (/otra|volver|menu/i.test(text)) {
+    waitingForLawInput = false;
+    showLawsChoice();
     return;
   }
+
+  // Permite cualquier texto como búsqueda de ley (número o nombre)
+  waitingForLawInput = false;
+  await fetchSpecificLaw(text);
+  return;
+}
 
   // Asesor
   if (/asesor/i.test(text)) {
@@ -60,7 +44,7 @@ async function sendMessage() {
   }
 
   // Leyes: solo palabras clave "ley" o "leyes"
-  if (/^ley(es)?$/i.test(text)) {
+  if (/\bley(es)?\b/i.test(text)) {
     waitingForLawOption = true;
     showLawsChoice();
     return;
@@ -185,7 +169,7 @@ function showLawsChoice() {
     optionsContainer.remove();
     waitingForLawOption = false;
     waitingForLawInput = true;
-    addMessage("📝 Escribí el número o título de la ley que deseas consultar:", "bot");
+    addMessage("📝 Escribí el número de la ley que deseas consultar:", "bot");
   });
 
   const allOption = document.createElement("div");
@@ -216,7 +200,7 @@ async function fetchAllLaws() {
 
     let allContent = "";
     allLaws.forEach((ley) => {
-      allContent += `<b>${ley.titulo}</b>: ${ley.contenido.replace(/\n/g, "<br>")}<br><br>`;
+      allContent += `${ley.contenido.replace(/\n/g, "<br>")}<br><br>`;
     });
 
     addMessage(allContent, "bot");
@@ -235,7 +219,7 @@ async function fetchSpecificLaw(titulo) {
       addMessage(`⚠️ ${data.error}`, "bot");
     } else {
       addMessage(
-        `<b>${data.titulo}</b>: ${data.contenido.replace(/\n/g, "<br>")}`,
+        `${data.contenido.replace(/\n/g, "<br>")}`,
         "bot"
       );
     }
@@ -254,9 +238,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatContainer = document.getElementById("chatbot");
 
   refreshBtn.addEventListener("click", () => {
+    // Limpia la ventana del chat
     chatWindow.innerHTML = "";
+
+    // 🔑 Reinicia las variables de estado para evitar contexto viejo
+    waitingForLawOption = false;
+    waitingForLawInput = false;
+    chatInitialized = false;
+
+    // Vuelve al estado inicial mostrando el mensaje de bienvenida
     showWelcomeMessage();
+    chatInitialized = true;
   });
+
 
   closeBtn.addEventListener("click", () => {
     if (!chatContainer) return;
