@@ -7,6 +7,12 @@ let chatInitialized = false;
 let waitingForLawOption = false; // Esperando que el usuario elija "una ley específica" o "todas"
 let waitingForLawInput = false;  // Esperando que escriba el número/título de la ley
 
+// Test --------------------
+const hiAnimation = document.getElementById("hi-animation");
+const loadingAnimation = document.getElementById("loading-animation");
+
+
+
 // -------------------- Envío de mensajes --------------------
 async function sendMessage() {
   const text = userInput.value.trim();
@@ -15,27 +21,27 @@ async function sendMessage() {
   addMessage(text, "user");
   userInput.value = "";
 
+  // 👋 ocultamos "Hi" en cuanto el usuario envía su primer mensaje
+  hiAnimation.style.display = "none";
+
   // ⚡ Si estamos esperando que elija entre "una" o "todas"
   if (waitingForLawOption) {
     addMessage("⚠️ Por favor selecciona una de las opciones antes de continuar.", "bot");
-    showLawsChoice(); // volvemos a mostrar botones
+    showLawsChoice();
     return;
   }
 
   // ⚡ Si estamos esperando que escriba el número/título de la ley
   if (waitingForLawInput) {
-  // Si el usuario quiere volver a elegir
-  if (/otra|volver|menu/i.test(text)) {
+    if (/otra|volver|menu/i.test(text)) {
+      waitingForLawInput = false;
+      showLawsChoice();
+      return;
+    }
     waitingForLawInput = false;
-    showLawsChoice();
+    await fetchSpecificLaw(text);
     return;
   }
-
-  // Permite cualquier texto como búsqueda de ley (número o nombre)
-  waitingForLawInput = false;
-  await fetchSpecificLaw(text);
-  return;
-}
 
   // Asesor
   if (/asesor/i.test(text)) {
@@ -43,21 +49,24 @@ async function sendMessage() {
     return;
   }
 
-  // Leyes: solo palabras clave "ley" o "leyes"
+  // Leyes
   if (/\bley(es)?\b/i.test(text)) {
     waitingForLawOption = true;
     showLawsChoice();
     return;
   }
 
-  // Ley específica: detecta "Ley 27.118" o "Ley 27118"
+  // Ley específica
   const leyMatch = text.match(/ley\s+(\d+\.?\d*)/i);
   if (leyMatch) {
     await fetchSpecificLaw(leyMatch[1].replace(/\./g, ""));
     return;
   }
 
-  // Respuesta normal de la IA
+  // 🌟 Llamada normal a la IA
+  // ⏳ mostramos "Loading" mientras esperamos respuesta
+  loadingAnimation.style.display = "block";
+
   try {
     const response = await fetch("/chat", {
       method: "POST",
@@ -71,18 +80,19 @@ async function sendMessage() {
     addMessage(data.reply, "bot");
   } catch (err) {
     console.error(err);
-    addMessage(
-      "❌ Problemas al contactarse con la IA (mensaje de prueba sin API Key)",
-      "bot"
-    );
+    addMessage("❌ Problemas al contactarse con la IA (mensaje de prueba sin API Key)", "bot");
+  } finally {
+    // ✅ ocultamos "Loading" cuando llega respuesta
+    loadingAnimation.style.display = "none";
   }
 }
-
 // -------------------- Función para agregar mensajes --------------------
-function addMessage(text, sender) {
+
+function addMessage(message, sender) {
+  const chatWindow = document.getElementById("chat-window");
   const msg = document.createElement("div");
-  msg.classList.add("message", sender);
-  msg.innerHTML = text;
+  msg.classList.add(sender);
+  msg.textContent = message;
   chatWindow.appendChild(msg);
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
@@ -211,6 +221,13 @@ async function fetchAllLaws() {
 }
 
 async function fetchSpecificLaw(titulo) {
+  // Verifica si el input es un número (puede tener espacios o puntos)
+  if (!/^\d+(\.\d+)?$/.test(titulo.trim())) {
+    addMessage("⚠️ Por favor, ingresa el número de la ley que deseas consultar (solo números).", "bot");
+    waitingForLawInput = true;
+    return;
+  }
+
   try {
     const res = await fetch(`/api/leyes/${encodeURIComponent(titulo)}`);
     const data = await res.json();
@@ -228,9 +245,6 @@ async function fetchSpecificLaw(titulo) {
     addMessage("❌ Hubo un problema al consultar la ley.", "bot");
   }
 }
-
-
-
 // -------------------- Botones de refrescar y minimizar --------------------
 document.addEventListener("DOMContentLoaded", () => {
   const refreshBtn = document.getElementById("refreshChat");

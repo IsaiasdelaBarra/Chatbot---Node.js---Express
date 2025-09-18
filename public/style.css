@@ -183,6 +183,44 @@
   color: #25a53a;
 }
 
+
+
+
+
+
+
+
+
+/* test  */
+
+.chatbot-animations {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+}
+
+.chatbot-animations img {
+  max-width: 120px;
+  display: none; /* ocultas por defecto */
+}
+
+
+#hi-animation {
+  display: block; /* 👋 visible al inicio */
+}
+
+#loading-animation {
+  display: none; /* se muestra dinámicamente */
+}
+
+
+
+
+
+
+
+
 .emoji-btn,
 .attach-btn {
   width: 25px;        /* ancho fijo */
