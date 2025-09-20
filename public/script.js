@@ -260,6 +260,9 @@ document.addEventListener("DOMContentLoaded", () => {
     waitingForLawInput = false;
     chatInitialized = false;
 
+    hiAnimation.style.display = "block"; // 🔹 Mostramos el GIF
+  loadingAnimation.style.display = "none"; // 🔹 Ocultamos cualquier otro GIF
+
     // Vuelve al estado inicial mostrando el mensaje de bienvenida
     showWelcomeMessage();
     chatInitialized = true;
@@ -336,3 +339,33 @@ document.addEventListener("mouseup", () => {
   document.body.style.userSelect = "auto";
 });
 
+// Funcionalidad de emojis en el chatbot
+
+document.addEventListener("DOMContentLoaded", () => {
+  const emojiBtn = document.querySelector(".emoji-btn");
+  const emojiPicker = document.querySelector(".emoji-picker");
+  const userInput = document.getElementById("userInput");
+
+  // Mostrar / ocultar el menú de emojis
+  emojiBtn.addEventListener("click", () => {
+    if (emojiPicker.style.display === "none") {
+      emojiPicker.style.display = "block";
+    } else {
+      emojiPicker.style.display = "none";
+    }
+  });
+
+  // Insertar emoji en el input al seleccionarlo
+  emojiPicker.addEventListener("emoji-click", (event) => {
+    userInput.value += event.detail.unicode;
+    emojiPicker.style.display = "none"; // Opcional: cerrar después de elegir
+    userInput.focus();
+  });
+
+  // Cerrar el menú si se hace clic fuera
+  document.addEventListener("click", (e) => {
+    if (!emojiBtn.contains(e.target) && !emojiPicker.contains(e.target)) {
+      emojiPicker.style.display = "none";
+    }
+  });
+});

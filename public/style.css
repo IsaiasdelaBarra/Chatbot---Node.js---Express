@@ -51,8 +51,8 @@
 }
 
 .chatbot-icon {
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: url('./iconos/Agrobot.png') no-repeat center center;
   background-size: cover;
@@ -62,7 +62,7 @@
 }
 
 .chatbot-name {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #333;
 }
@@ -86,10 +86,11 @@
   padding: 16px;
   overflow-y: auto;
   background: #ffffff url('./iconos/Agrobot Icon.png') no-repeat center center;
-  background-size: 220px 220px; /* Ajusta el tamaño según lo que prefieras */
+  background-size: 180px 180px; /* Ajusta el tamaño según lo que prefieras */
   display: flex;
   flex-direction: column;
   gap: 8px;                        /* separación entre burbujas */
+  background-position: center calc(50% + 20px);
 }
 
 /* Mensajes del bot (izquierda) */
@@ -188,9 +189,6 @@
 
 
 
-
-
-
 /* test  */
 
 .chatbot-animations {
@@ -201,7 +199,7 @@
 }
 
 .chatbot-animations img {
-  max-width: 120px;
+  max-width: 160px;
   display: none; /* ocultas por defecto */
 }
 
@@ -214,15 +212,25 @@
   display: none; /* se muestra dinámicamente */
 }
 
+.chat-input-icons {
+  position: relative; /* 🔹 Para que el picker se posicione relativo a este contenedor */
+}
 
+.emoji-picker {
+  position: absolute;
+  bottom: 100%;       /* 🔹 Hace que se abra hacia arriba del botón */
+  left: 0;
+  margin-bottom: 8px; /* 🔹 Espacio entre el botón y el menú */
+  z-index: 9999;      /* 🔹 Asegura que quede por encima del chatbot */
+  width: 280px;       /* Ajustá el ancho como quieras */
+  max-height: 300px;  /* Evita que sea demasiado alto */
+  overflow: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Efecto flotante */
+  border-radius: 10px;
+  background: #fff;   /* Fondo blanco */
+}
 
-
-
-
-
-
-.emoji-btn,
-.attach-btn {
+.emoji-btn {
   width: 25px;        /* ancho fijo */
   height: 25px;       /* alto fijo */
   display: flex;      /* para centrar el contenido */
@@ -230,13 +238,16 @@
 }
 
 
+
+
+
 /* Boton de WhatsApp flotante */
 #whatsapp-btn {
   position: fixed;
   bottom: 50px;
   right: 30px;
-  width: 70px;       /* tamaño del ícono */
-  height: 70px;
+  width: 80px;       /* tamaño del ícono */
+  height: 80px;
   cursor: pointer;
   z-index: 1001;     /* encima del chat */
   transition: transform 0.2s;

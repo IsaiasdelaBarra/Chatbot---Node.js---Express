@@ -40,13 +40,12 @@
       <div class="chatbot-input" id="chat-input">
         <!-- Íconos debajo -->
         <div class="chat-input-icons">
-          <button class="emoji-btn" title="Emoji">
-            <img src="iconos/feliz.png" alt="Emoji" />
-          </button>
-          <button class="attach-btn" title="Adjuntar">
-            <img src="iconos/Clip.png" alt="Adjuntar" />
-          </button>
-        </div>
+  <button class="emoji-btn" title="Emoji">
+    <img src="iconos/feliz.png" alt="Emoji" />
+  </button>
+  <emoji-picker class="emoji-picker" style="display:none;"></emoji-picker>
+</div>
+
 
         <!-- Burbuja del campo de texto con botón de enviar -->
         <div class="chat-input-bubble">
@@ -73,6 +72,7 @@
 
     </div>
     <img src="iconos/IconoWhatsapp.png" id="whatsapp-btn" alt="Abrir chat" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
