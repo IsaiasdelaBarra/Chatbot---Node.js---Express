@@ -5,8 +5,8 @@
   position: fixed;
   bottom: 60px;
   right: 110px;
-  width: 350px;
-  height: 500px;
+  width: 476px;
+  height: 586px;
   min-width: 250px;   /* 🔹 evita que sea demasiado chico */
   min-height: 300px;
   max-width: 90vw;    /* 🔹 evita que invada toda la pantalla */
@@ -102,7 +102,7 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   margin-bottom: 4px;
   max-width: 80%;
-  font-size: 14px;
+  font-size: 18px;
   line-height: 1.4;
   color: #333;
 }
@@ -116,7 +116,7 @@
   border-radius: 14px;
   margin-bottom: 4px;
   max-width: 70%;
-  font-size: 14px;
+  font-size: 18px;
 }
 
 
@@ -231,10 +231,11 @@
 }
 
 .emoji-btn {
-  width: 25px;        /* ancho fijo */
-  height: 25px;       /* alto fijo */
-  display: flex;      /* para centrar el contenido */
+  width: 25px;
+  height: 25px;
+  display: flex;
   justify-content: left;
+  margin-left: 10px; /* mueve 5px a la derecha */
 }
 
 

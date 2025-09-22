@@ -143,10 +143,11 @@ if (whatsappBtn && chatbot) {
 
 // -------------------- Mensaje de bienvenida --------------------
 function showWelcomeMessage() {
-  addMessage(
-    "¡Hola! 👋 Bienvenido al AgroBot del Ministerio de Agricultura. ¿Qué deseas hacer?",
-    "bot"
-  );
+  addMessage("🌱 ¡Hola! Soy el asistente virtual del Ministerio de Agricultura.", "bot");
+
+  addMessage("Puedo ayudarte a:\n\n📑 Consultar leyes y normativas vigentes\n💬 Brindarte asistencia virtual sobre trámites y servicios", "bot");
+
+  addMessage("¿Qué necesitas hoy?", "bot");
 }
 
 // -------------------- Opciones de asesor --------------------
