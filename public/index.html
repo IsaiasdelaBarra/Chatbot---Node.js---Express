@@ -3,76 +3,99 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chatbot Agricultura</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>Chatbot App</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
-
   <body>
-    <div class="chatbot-container" id="chatbot">
-      <!-- Encabezado -->
-      <div class="chatbot-header">
-        <div class="chatbot-header-left">
-          <div class="chatbot-icon"></div>
-          <span class="chatbot-name">AgroBot</span>
+    <div class="app-container">
+      <header>
+        <div class="menu-icon" id="menu-icon">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
         </div>
-        <div class="chatbot-header-buttons">
-          <button id="refreshChat" title="Refrescar">⟳</button>
-          <button id="closeChat" title="Minimizar">✕</button>
+        <div class="back-button hidden" id="back-button">&lt;</div>
+        <div class="refresh-button hidden" id="refresh-button">⟳</div>
+      </header>
+
+      <div class="screen-principal" id="main-screen">
+        <h1 class="greeting">Hola soy Agrobot!</h1>
+        <p class="question">
+          ¿En que puedo ayudarte?
+          <img
+            src="iconos/planta.png"
+            alt="Planta Icono"
+            class="plant-icon-main"
+          />
+        </p>
+
+        <div class="options-list">
+          <div class="option-card" id="btn-chat">
+            <img src="iconos/robot-de-chat.png" alt="IA" class="option-icon" />
+            <p>Inicie una conversacion con la IA</p>
+          </div>
+          <div class="option-card" id="btn-microfono">
+            <img
+              src="iconos/microfono-de-transmision.png"
+              alt="Micrófono"
+              class="option-icon"
+            />
+            <p>Consulte con la IA mediante microfono</p>
+          </div>
+          <div class="option-card" id="btn-whatsapp">
+            <img src="iconos/whatsapp.png" alt="WhatsApp" class="option-icon" />
+            <p>Dirigete a nuestro grupo de whatsapp</p>
+          </div>
+          <div class="option-card" id="btn-mail">
+            <img src="iconos/gmail.png" alt="Correo" class="option-icon" />
+            <p>Manda un correo electronico</p>
+          </div>
         </div>
       </div>
 
-      <!-- Ventana de mensajes -->
-      <div class="chatbot-messages" id="chat-window">
-        <!-- Mensajes se insertarán aquí desde script.js -->
+      <div class="screen-microfono hidden" id="microfono-screen">
+        <img src="iconos/HiAnimation.gif" alt="Chatbot" class="chatbot-image" />
+        <h1 class="greeting">Bienvenido!</h1>
+        <p class="question">Pregunta lo que quieras</p>
+        <div class="microphone-button">
+          <img src="iconos/Microfono2.png" alt="Micrófono" />
+        </div>
       </div>
 
+      <!-- Pantalla de chat -->
+      <div class="screen-chat hidden" id="chat-screen">
+        <div class="chat-box" id="chat-box">
+          <!-- Aquí aparecerán los mensajes de la ventana de chat -->
 
-      <!-- Contenedor de animaciones -->
-<div class="chatbot-animations">
-  <img src="iconos/Chatbot Hi.gif" id="hi-animation" alt="Hola" />
-  <img src="iconos/Chatbot Loading.gif" id="loading-animation" alt="Cargando" />
-</div>
+          
+        </div>
 
-
-
-
-      <!-- Input -->
-      <div class="chatbot-input" id="chat-input">
-        <!-- Íconos debajo -->
-        <div class="chat-input-icons">
-  <button class="emoji-btn" title="Emoji">
-    <img src="iconos/feliz.png" alt="Emoji" />
-  </button>
-  <emoji-picker class="emoji-picker" style="display:none;"></emoji-picker>
-</div>
-
-
-        <!-- Burbuja del campo de texto con botón de enviar -->
-        <div class="chat-input-bubble">
+        <div class="chat-input-area">
           <input
             type="text"
-            id="userInput"
-            placeholder="Escribe tu consulta..."
+            id="chat-input"
+            placeholder="Escribe tu pregunta..."
           />
-          <button class="send-btn" onclick="sendMessage()" title="Enviar">
-            ➤
-          </button>
+          <button id="send-btn">➤</button>
         </div>
       </div>
 
       <!-- 🔹 Handles para todos los bordes y esquinas -->
-  <div class="resize-handle top"></div>
-  <div class="resize-handle bottom"></div>
-  <div class="resize-handle left"></div>
-  <div class="resize-handle right"></div>
-  <div class="resize-handle topleft"></div>
-  <div class="resize-handle topright"></div>
-  <div class="resize-handle bottomleft"></div>
-  <div class="resize-handle bottomright"></div>
-
+      <div class="resize-handle top" data-direction="top"></div>
+      <div class="resize-handle bottom" data-direction="bottom"></div>
+      <div class="resize-handle left" data-direction="left"></div>
+      <div class="resize-handle right" data-direction="right"></div>
+      <div class="resize-handle topleft" data-direction="topleft"></div>
+      <div class="resize-handle topright" data-direction="topright"></div>
+      <div class="resize-handle bottomleft" data-direction="bottomleft"></div>
+      <div class="resize-handle bottomright" data-direction="bottomright"></div>
     </div>
-    <img src="iconos/IconoWhatsapp.png" id="whatsapp-btn" alt="Abrir chat" />
-    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -1,0 +1,499 @@
+ /* Paleta de colores */
+:root {
+    --gradient-start: #6ac56c;
+    --gradient-end: #3d8f4c;
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --text-color: #fff;
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5; /* Un color de fondo claro para la página */
+    color: #333; /* Color de texto oscuro para el contenido general */
+}
+
+.app-container {
+    width: 350px; /* Ancho del chat */
+    height: 500px; /* Alto del chat */
+    background: url("iconos/Green-Background2.png");
+    background-size: cover;      /* La imagen ocupa todo el contenedor */
+    background-position: center; /* Centrado */
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
+    position: absolute; /* Necesario para moverlo */   
+    overflow: visible;     /* Scroll si el contenido se desborda */
+    min-width: 250px;
+    min-height: 350px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  color: white;
+  cursor: grab;  /* Para indicar que se puede mover */
+}
+
+header:active {
+  cursor: grabbing;
+}
+
+.menu-icon {
+    cursor: pointer;
+}
+
+.menu-icon .bar {
+    display: block;
+    width: 20px;
+    height: 3px;
+    background: var(--text-color);
+    margin: 3px 0;
+    border-radius: 2px;
+}
+
+
+
+
+
+/*----------------------------*/
+/* Primera ventana */
+/*----------------------------*/
+
+main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-top: 5px;   /* espacio arriba */
+  padding-bottom: 15px; /* espacio abajo */
+  scrollbar-width: none; /* Firefox: oculta scrollbar */
+}
+
+
+.greeting, .question {
+    color: white;
+}
+
+.greeting {
+    /* Nuevo estilo: Reduce el margen superior por defecto de H1 */
+    margin-top: 5px; /* Mueve el saludo más cerca del header (ajusta este valor) */
+    margin-bottom: 5px; /* Opcional: Reduce el espacio debajo del saludo */
+}
+
+
+.question {
+    color: white;
+    margin-top: -5px;
+    margin-bottom: 30px;
+    
+    /* ESTILOS PARA ALINEAR ICONO Y TEXTO (se mantienen) */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre el texto y el icono */
+    font-size: 1rem;
+}
+
+.plant-icon-main {
+    /* Hacemos el icono un poco más grande: de 1.2rem a 1.5rem */
+    width: 2rem; 
+    height: 2rem;
+}
+
+.option-card {
+    background: rgba(0, 0, 0, 0.25); /* más contraste que el blanco */
+    border-radius: 15px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* más fuerte que antes */
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6); /* mejora legibilidad del texto */
+}
+
+.option-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5); /* brilla un poco más al hover */
+}
+
+.option-card p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.option-icon {
+    width: 40px; /* Ancho de la imagen */
+    height: 40px; /* Altura de la imagen */
+    margin-right: 15px; /* Espacio entre el ícono y el texto */
+    border-radius: 10px;
+    /* Aquí puedes añadir más estilos, como border-radius si quieres que sean circulares */
+}
+
+
+
+
+
+/*----------------------------*/
+/* Segunda ventana */
+/*----------------------------*/
+/* ... Tus estilos existentes ... */
+
+.app-container-static {
+    width: 350px;
+    height: 500px;
+    background: #509b2a;
+    background: linear-gradient(178deg, rgba(80, 155, 42, 1) 20%, rgba(73, 184, 119, 1) 76%);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Es crucial para que las pantallas se posicionen correctamente */
+}
+
+
+.chatbot-image {
+    width: 200px;  /* Ajusta el ancho a un tamaño más pequeño (ej. 150px) */
+    height: auto;  /* Mantiene la proporción automáticamente */
+    /* Puedes ajustar el margen vertical si quieres más o menos espacio */
+    margin: 15px 0 20px 0; 
+    border-radius: 50%; /* Opcional: para darle forma circular si lo deseas */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.screen-microfono {
+    display: flex; 
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    position: absolute; 
+    top: 70px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+}
+
+.screen-microfono.hidden {
+    display: none !important;
+}
+
+.screen-microfono h1,
+.screen-microfono p,
+.screen-microfono .microphone-button,
+.screen-microfono .chatbot-image {
+    /* Esto garantiza que todos los elementos dentro del div se muestren */
+    display: flex; /* O 'block' si prefieres */
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 0; /* Un poco de espacio entre elementos */
+}
+
+
+.microphone-button {
+    /* Establece un tamaño base para el contenedor del micrófono */
+    width: 80px; /* Tamaño similar al GIF, ajusta si es necesario */
+    height: 80px; /* Para hacerlo circular o cuadrado si no lo es ya */
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Opcional: Estilos para que parezca un botón */
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%; /* Lo hace circular */
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+}
+
+.microphone-button:active {
+    transform: scale(0.95);
+}
+
+.microphone-button img {
+    /* Ajusta el tamaño de la imagen DENTRO del botón */
+    width: 60%; /* La imagen ocupará el 60% del ancho del contenedor (150px) */
+    height: auto;
+    /* Esto permite que la imagen del micrófono se vea bien centrada dentro del círculo de 150x150px */
+}
+
+
+
+
+/* ---------------------------- */
+/* Primera ventana (principal) */
+/* ---------------------------- */
+.screen-principal {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+}
+
+.screen-principal.hidden {
+    display: none !important;
+}
+
+
+/* Estilos del Botón de Regreso (Back Button) */
+/* ------------------------------------- */
+.back-button {
+    /* Mueve el botón de regreso a la izquierda del header */
+    order: -1; /* Esto asegura que se posicione antes que el menu-icon */
+    font-size: 1.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 15px; /* Mueve el icono a la derecha, separándolo del borde */
+    color: var(--text-color); /* Asegura que el color sea blanco */
+    /* Asegúrate de que no tenga márgenes que lo separen del borde izquierdo */
+    padding: 0;
+}
+
+/* Estilo para cuando el botón está oculto */
+.hidden {
+    display: none !important;
+}
+
+
+
+
+/*----------------------------*/
+/* Tercera ventana - Chat */
+/*----------------------------*/
+
+.screen-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: white;
+  overflow: hidden; /* Evita que el scroll de la ventana empuje el input */
+}
+
+.chat-box {
+  flex: 1;                /* Ocupa todo el espacio disponible */
+  overflow-y: auto;       /* Scroll solo aquí */
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 10px;
+  margin-bottom: 10px;
+  backdrop-filter: blur(8px);
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message {
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+/* Mensajes del bot a la izquierda */
+.message.bot {
+  background: rgba(255, 255, 255, 0.2);
+  align-self: flex-start;
+  text-align: left;
+  border-bottom-left-radius: 2px;
+}
+
+/* Mensajes del usuario a la derecha */
+.message.user {
+  background: #3d8f4c;
+  align-self: flex-end;
+  text-align: right;
+  border-bottom-right-radius: 2px;
+}
+
+/* Input del chat */
+
+.chat-input-area {
+  flex-shrink: 0; /* No se encoge ni se desplaza */
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input-area input {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+.chat-input-area button {
+  background: #6ac56c;
+  border: none;
+  border-radius: 10px;
+  padding: 0 15px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+}
+
+
+/* Botones de opciones en chat */
+.chat-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Cada opción */
+.chat-option {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    color: white;
+    font-size: 0.9rem;
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+.chat-option:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.refresh-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  color: white;
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.refresh-button:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ---------------------------- */
+/* Redimencion de la ventana */
+/* ---------------------------- */
+
+.resize-handle {
+    position: absolute;
+    /* Un pequeño margen para que sea más fácil de agarrar */
+    /* El tamaño base será pequeño y solo se expandirá con el :hover */
+    /* Para debug, puedes poner un color de fondo: background: rgba(255, 0, 0, 0.2); */
+    z-index: 1000; /* Asegura que estén por encima de todo */
+}
+
+/* Bordes (Más fácil de agarrar horizontal o verticalmente) */
+.resize-handle.top,
+.resize-handle.bottom {
+    left: 0;
+    right: 0;
+    height: 10px; /* Altura para hacer clic */
+    cursor: ns-resize; /* Cursor para redimensionamiento vertical */
+}
+
+.resize-handle.left,
+.resize-handle.right {
+    top: 0;
+    bottom: 0;
+    width: 10px; /* Ancho para hacer clic */
+    cursor: ew-resize; /* Cursor para redimensionamiento horizontal */
+}
+
+.resize-handle.top {
+    top: -5px; /* Mitad afuera, mitad adentro */
+}
+
+.resize-handle.bottom {
+    bottom: -5px;
+}
+
+.resize-handle.left {
+    left: -5px;
+}
+
+.resize-handle.right {
+    right: -5px;
+}
+
+/* Esquinas (Un poco más grandes y con el cursor diagonal) */
+.resize-handle.topleft,
+.resize-handle.bottomright {
+    width: 15px;
+    height: 15px;
+    cursor: nwse-resize; /* Cursor diagonal */
+}
+
+.resize-handle.topright,
+.resize-handle.bottomleft {
+    width: 15px;
+    height: 15px;
+    cursor: nesw-resize; /* Cursor diagonal opuesto */
+}
+
+.resize-handle.topleft {
+    top: -7.5px;
+    left: -7.5px;
+}
+
+.resize-handle.topright {
+    top: -7.5px;
+    right: -7.5px;
+}
+
+.resize-handle.bottomleft {
+    bottom: -7.5px;
+    left: -7.5px;
+}
+
+.resize-handle.bottomright {
+    bottom: -7.5px;
+    right: -7.5px;
+}

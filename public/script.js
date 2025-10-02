@@ -1,371 +1,361 @@
-const chatWindow = document.getElementById("chat-window");
-const userInput = document.getElementById("userInput");
-const chatbot = document.querySelector(".chatbot-container");
-const whatsappBtn = document.getElementById("whatsapp-btn");
+document.addEventListener('DOMContentLoaded', () => {
 
-let chatInitialized = false;
-let waitingForLawOption = false; // Esperando que el usuario elija "una ley específica" o "todas"
-let waitingForLawInput = false;  // Esperando que escriba el número/título de la ley
+    // -------------------- ELEMENTOS --------------------
+    const mainScreen = document.getElementById('main-screen');
+    const microfonoScreen = document.getElementById('microfono-screen');
+    const chatScreen = document.getElementById('chat-screen');
+    const btnMicrofono = document.getElementById('btn-microfono');
+    const btnChat = document.getElementById('btn-chat');
+    const backButton = document.getElementById('back-button');
+    const menuIcon = document.getElementById('menu-icon');
+    const chatBox = document.getElementById('chat-box');
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const appContainer = document.querySelector('.app-container');
+    const header = document.querySelector('header');
+    const handles = document.querySelectorAll('.resize-handle');
+    const whatsappBtn = document.getElementById("btn-whatsapp");
+    const hiAnimation = document.getElementById("hi-animation");
+    const loadingAnimation = document.getElementById("loading-animation");
+    const refreshButton = document.getElementById('refresh-button');
 
-// Test --------------------
-const hiAnimation = document.getElementById("hi-animation");
-const loadingAnimation = document.getElementById("loading-animation");
+    let chatInitialized = false;
+    let waitingForLawOption = false;
+    let waitingForLawInput = false;
 
-
-
-// -------------------- Envío de mensajes --------------------
-async function sendMessage() {
-  const text = userInput.value.trim();
-  if (!text) return;
-
-  addMessage(text, "user");
-  userInput.value = "";
-
-  // 👋 ocultamos "Hi" en cuanto el usuario envía su primer mensaje
-  hiAnimation.style.display = "none";
-
-  // ⚡ Si estamos esperando que elija entre "una" o "todas"
-  if (waitingForLawOption) {
-    addMessage("⚠️ Por favor selecciona una de las opciones antes de continuar.", "bot");
-    showLawsChoice();
-    return;
-  }
-
-  // ⚡ Si estamos esperando que escriba el número/título de la ley
-  if (waitingForLawInput) {
-    if (/otra|volver|menu/i.test(text)) {
-      waitingForLawInput = false;
-      showLawsChoice();
-      return;
-    }
-    waitingForLawInput = false;
-    await fetchSpecificLaw(text);
-    return;
-  }
-
-  // Asesor
-  if (/asesor/i.test(text)) {
-    showAdvisorOptions();
-    return;
-  }
-
-  // Leyes
-  if (/\bley(es)?\b/i.test(text)) {
-    waitingForLawOption = true;
-    showLawsChoice();
-    return;
-  }
-
-  // Ley específica
-  const leyMatch = text.match(/ley\s+(\d+\.?\d*)/i);
-  if (leyMatch) {
-    await fetchSpecificLaw(leyMatch[1].replace(/\./g, ""));
-    return;
-  }
-
-  // 🌟 Llamada normal a la IA
-  // ⏳ mostramos "Loading" mientras esperamos respuesta
-  loadingAnimation.style.display = "block";
-
-  try {
-    const response = await fetch("/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text }),
-    });
-
-    if (!response.ok) throw new Error("API key no válida o suspendida");
-
-    const data = await response.json();
-    addMessage(data.reply, "bot");
-  } catch (err) {
-    console.error(err);
-    addMessage("❌ Problemas al contactarse con la IA (mensaje de prueba sin API Key)", "bot");
-  } finally {
-    // ✅ ocultamos "Loading" cuando llega respuesta
-    loadingAnimation.style.display = "none";
-  }
-}
-// -------------------- Función para agregar mensajes --------------------
-
-function addMessage(message, sender) {
-  const chatWindow = document.getElementById("chat-window");
-  const msg = document.createElement("div");
-  msg.classList.add(sender);
-  msg.textContent = message;
-  chatWindow.appendChild(msg);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
-}
-
-// -------------------- Drag del chat --------------------
-let isDragging = false;
-let offsetX = 0;
-let offsetY = 0;
-
-// Seleccionamos el header
-const header = document.querySelector(".chatbot-header");
-
-// Inicia arrastre solo desde el header
-header.addEventListener("mousedown", (e) => {
-  isDragging = true;
-  const rect = chatbot.getBoundingClientRect();
-  offsetX = e.clientX - rect.left;
-  offsetY = e.clientY - rect.top;
-  header.style.cursor = "grabbing"; // cursor mientras arrastramos
-});
-
-document.addEventListener("mousemove", (e) => {
-  if (!isDragging) return;
-  chatbot.style.left = e.clientX - offsetX + "px";
-  chatbot.style.top = e.clientY - offsetY + "px";
-  chatbot.style.bottom = "auto";
-  chatbot.style.right = "auto";
-});
-
-document.addEventListener("mouseup", () => {
-  isDragging = false;
-  header.style.cursor = "grab"; // vuelve a grab cuando soltamos
-});
-
-// -------------------- Botón de WhatsApp --------------------
-if (whatsappBtn && chatbot) {
-  whatsappBtn.addEventListener("click", () => {
-    chatbot.classList.toggle("is-open");
-
-    if (!chatInitialized && chatbot.classList.contains("is-open")) {
-      showWelcomeMessage();
-      chatInitialized = true;
-    }
-  });
+    // -------------------- FUNCIONES PANTALLAS --------------------
+    const showScreen = (screen) => {
+        mainScreen.classList.add('hidden');
+        microfonoScreen.classList.add('hidden');
+        chatScreen.classList.add('hidden');
+        screen.classList.remove('hidden');
+        menuIcon.classList.add('hidden');
+        backButton.classList.remove('hidden');
+        if (screen === chatScreen) {
+    refreshButton.classList.remove('hidden');
 } else {
-  console.error("[chat] Falta whatsappBtn o chatbot en el DOM.");
+    refreshButton.classList.add('hidden');
 }
+    };
 
-// -------------------- Mensaje de bienvenida --------------------
-function showWelcomeMessage() {
-  addMessage(
-    "¡Hola! 👋 Bienvenido al AgroBot del Ministerio de Agricultura. ¿Qué deseas hacer?",
-    "bot"
-  );
-}
 
-// -------------------- Opciones de asesor --------------------
-function showAdvisorOptions() {
-  const optionsContainer = document.createElement("div");
-  optionsContainer.className = "chat-options";
+    // ---------- Ocultar elementos y mostrar pantalla principal ----------
+    const showMainScreen = () => {
+        mainScreen.classList.remove('hidden');
+        microfonoScreen.classList.add('hidden');
+        chatScreen.classList.add('hidden');
+        menuIcon.classList.remove('hidden');
+        backButton.classList.add('hidden');
+        refreshButton.classList.add('hidden');
+    };
 
-  const optWhatsapp = document.createElement("div");
-  optWhatsapp.className = "chat-option";
-  optWhatsapp.textContent = "📲 Contactate con un asesor por Whatsapp";
-  optWhatsapp.addEventListener("click", () => {
-    window.open("https://wa.me/549XXXXXXXXXX", "_blank");
-    optionsContainer.remove();
-  });
+    btnMicrofono.addEventListener('click', () => showScreen(microfonoScreen));
+    btnChat.addEventListener('click', () => showScreen(chatScreen));
+    backButton.addEventListener('click', showMainScreen);
 
-  optionsContainer.appendChild(optWhatsapp);
-  chatWindow.appendChild(optionsContainer);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
-}
+    // -------------------- CHAT --------------------
+    const addMessage = (message, sender) => {
+        const msg = document.createElement('div');
+        msg.classList.add('message', sender);
+        msg.innerHTML = message;
+        chatBox.appendChild(msg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
 
-// -------------------- Opciones de leyes --------------------
-function showLawsChoice() {
-  const optionsContainer = document.createElement("div");
-  optionsContainer.className = "chat-options";
+    const sendMessage = async () => {
+        const text = chatInput.value.trim();
+        if (!text) return;
 
-  const oneOption = document.createElement("div");
-  oneOption.className = "chat-option";
-  oneOption.textContent = "Una ley específica";
-  oneOption.addEventListener("click", () => {
-    optionsContainer.remove();
-    waitingForLawOption = false;
-    waitingForLawInput = true;
-    addMessage("📝 Escribí el número de la ley que deseas consultar:", "bot");
-  });
+        addMessage(text, "user");
+        chatInput.value = "";
+        if (hiAnimation) hiAnimation.style.display = "none";
 
-  const allOption = document.createElement("div");
-  allOption.className = "chat-option";
-  allOption.textContent = "Todas las leyes";
-  allOption.addEventListener("click", async () => {
-    optionsContainer.remove();
-    waitingForLawOption = false;
-    await fetchAllLaws();
-  });
+        // Opciones de leyes
+        if (waitingForLawOption) {
+            addMessage("⚠️ Por favor selecciona una de las opciones antes de continuar.", "bot");
+            showLawsChoice();
+            return;
+        }
+        if (waitingForLawInput) {
+            if (/otra|volver|menu/i.test(text)) {
+                waitingForLawInput = false;
+                showLawsChoice();
+                return;
+            }
+            waitingForLawInput = false;
+            await fetchSpecificLaw(text);
+            return;
+        }
 
-  optionsContainer.appendChild(oneOption);
-  optionsContainer.appendChild(allOption);
-  chatWindow.appendChild(optionsContainer);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
-}
+        // Asesor
+        if (/asesor/i.test(text)) {
+            showAdvisorOptions();
+            return;
+        }
 
-// -------------------- Funciones de leyes --------------------
-async function fetchAllLaws() {
-  try {
-    const res = await fetch("/api/leyes/todas");
-    const allLaws = await res.json();
+        // Leyes
+        if (/\bley(es)?\b/i.test(text)) {
+            waitingForLawOption = true;
+            showLawsChoice();
+            return;
+        }
 
-    if (!allLaws.length) {
-      addMessage("📂 No se encontraron leyes.", "bot");
-      return;
-    }
+        const leyMatch = text.match(/ley\s+(\d+\.?\d*)/i);
+        if (leyMatch) {
+            await fetchSpecificLaw(leyMatch[1].replace(/\./g, ""));
+            return;
+        }
 
-    let allContent = "";
-    allLaws.forEach((ley) => {
-      allContent += `${ley.contenido.replace(/\n/g, "<br>")}<br><br>`;
+        // 🌟 Llamada normal a la IA
+        if (loadingAnimation) loadingAnimation.style.display = "block";
+        try {
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text })
+            });
+            if (!response.ok) throw new Error("API key no válida o suspendida");
+            const data = await response.json();
+            addMessage(data.reply, "bot");
+        } catch (err) {
+            console.error(err);
+            addMessage("❌ Problemas al contactarse con la IA.", "bot");
+        } finally {
+            if (loadingAnimation) loadingAnimation.style.display = "none";
+        }
+    };
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
+        }
     });
 
-    addMessage(allContent, "bot");
-  } catch (err) {
-    console.error(err);
-    addMessage("❌ Hubo un problema al cargar las leyes.", "bot");
-  }
+    // -------------------- LEYES Y ASESOR --------------------
+    function showAdvisorOptions() {
+        const optionsContainer = document.createElement("div");
+        optionsContainer.className = "chat-options";
+        const optWhatsapp = document.createElement("div");
+        optWhatsapp.className = "chat-option";
+        optWhatsapp.textContent = "📲 Contactate con un asesor por Whatsapp";
+        optWhatsapp.addEventListener("click", () => {
+            window.open("https://wa.me/549XXXXXXXXXX", "_blank");
+            optionsContainer.remove();
+        });
+        optionsContainer.appendChild(optWhatsapp);
+        chatBox.appendChild(optionsContainer);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function showLawsChoice() {
+        const optionsContainer = document.createElement("div");
+        optionsContainer.className = "chat-options";
+
+        const oneOption = document.createElement("div");
+        oneOption.className = "chat-option";
+        oneOption.textContent = "Una ley específica";
+        oneOption.addEventListener("click", () => {
+            optionsContainer.remove();
+            waitingForLawOption = false;
+            waitingForLawInput = true;
+            addMessage("📝 Escribí el número de la ley que deseas consultar:", "bot");
+        });
+
+        const allOption = document.createElement("div");
+        allOption.className = "chat-option";
+        allOption.textContent = "Todas las leyes";
+        allOption.addEventListener("click", async () => {
+            optionsContainer.remove();
+            waitingForLawOption = false;
+            await fetchAllLaws();
+        });
+
+        optionsContainer.appendChild(oneOption);
+        optionsContainer.appendChild(allOption);
+        chatBox.appendChild(optionsContainer);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function fetchAllLaws() {
+        try {
+            const res = await fetch("/api/leyes/todas");
+            const allLaws = await res.json();
+            if (!allLaws.length) {
+                addMessage("📂 No se encontraron leyes.", "bot");
+                return;
+            }
+            let allContent = "";
+            allLaws.forEach((ley) => {
+                allContent += `${ley.contenido.replace(/\n/g, "<br>")}<br><br>`;
+            });
+            addMessage(allContent, "bot");
+        } catch (err) {
+            console.error(err);
+            addMessage("❌ Hubo un problema al cargar las leyes.", "bot");
+        }
+    }
+
+    async function fetchSpecificLaw(titulo) {
+        if (!/^\d+(\.\d+)?$/.test(titulo.trim())) {
+            addMessage("⚠️ Ingresa solo el número de la ley.", "bot");
+            waitingForLawInput = true;
+            return;
+        }
+        try {
+            const res = await fetch(`/api/leyes/${encodeURIComponent(titulo)}`);
+            const data = await res.json();
+            if (data.error) addMessage(`⚠️ ${data.error}`, "bot");
+            else addMessage(`${data.contenido.replace(/\n/g, "<br>")}`, "bot");
+        } catch (err) {
+            console.error(err);
+            addMessage("❌ Hubo un problema al consultar la ley.", "bot");
+        }
+    }
+
+    // -------------------- Mensaje de bienvenida --------------------
+    // -------------------- FUNCION DE MENSAJE DE BIENVENIDA --------------------
+function showWelcomeMessage() {
+    addMessage("🌱 ¡Hola! Soy el asistente virtual del Ministerio de Agricultura.", "bot");
+    addMessage("Puedo ayudarte a:\n\n📑 Consultar leyes y normativas vigentes\n💬 Brindarte asistencia virtual sobre trámites y servicios", "bot");
+    addMessage("¿Qué necesitas hoy?", "bot");
 }
 
-async function fetchSpecificLaw(titulo) {
-  // Verifica si el input es un número (puede tener espacios o puntos)
-  if (!/^\d+(\.\d+)?$/.test(titulo.trim())) {
-    addMessage("⚠️ Por favor, ingresa el número de la ley que deseas consultar (solo números).", "bot");
-    waitingForLawInput = true;
-    return;
-  }
-
-  try {
-    const res = await fetch(`/api/leyes/${encodeURIComponent(titulo)}`);
-    const data = await res.json();
-
-    if (data.error) {
-      addMessage(`⚠️ ${data.error}`, "bot");
-    } else {
-      addMessage(
-        `${data.contenido.replace(/\n/g, "<br>")}`,
-        "bot"
-      );
-    }
-  } catch (err) {
-    console.error(err);
-    addMessage("❌ Hubo un problema al consultar la ley.", "bot");
-  }
+// -------------------- BOTON WHATSAPP DEL PRIMER MENU --------------------
+if (whatsappBtn) {
+    whatsappBtn.addEventListener('click', () => {
+        // Redirige al grupo de WhatsApp directamente
+        window.open("https://wa.me/549XXXXXXXXXX", "_blank");
+    });
 }
-// -------------------- Botones de refrescar y minimizar --------------------
-document.addEventListener("DOMContentLoaded", () => {
-  const refreshBtn = document.getElementById("refreshChat");
-  const closeBtn = document.getElementById("closeChat");
-  const chatContainer = document.getElementById("chatbot");
 
-  refreshBtn.addEventListener("click", () => {
-    // Limpia la ventana del chat
-    chatWindow.innerHTML = "";
+// -------------------- APERTURA DEL CHAT --------------------
+btnChat.addEventListener('click', () => {
+    showScreen(chatScreen);
 
-    // 🔑 Reinicia las variables de estado para evitar contexto viejo
-    waitingForLawOption = false;
-    waitingForLawInput = false;
-    chatInitialized = false;
-
-    hiAnimation.style.display = "block"; // 🔹 Mostramos el GIF
-  loadingAnimation.style.display = "none"; // 🔹 Ocultamos cualquier otro GIF
-
-    // Vuelve al estado inicial mostrando el mensaje de bienvenida
-    showWelcomeMessage();
-    chatInitialized = true;
-  });
-
-
-  closeBtn.addEventListener("click", () => {
-    if (!chatContainer) return;
-    chatContainer.classList.remove("is-open");
-  });
-});
-
-// -------------------- Envío con Enter --------------------
-userInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    sendMessage();
-  }
-});
-
-// -------------------- Redimensionar el chat --------------------
-
-const handles = document.querySelectorAll(".resize-handle");
-let isResizing = false;
-let currentHandle = null;
-
-handles.forEach(handle => {
-  handle.addEventListener("mousedown", (e) => {
-    isResizing = true;
-    currentHandle = handle.classList[1]; // ej: "top", "bottomright"
-    document.body.style.userSelect = "none"; // evita selección de texto
-    e.preventDefault();
-  });
-});
-
-document.addEventListener("mousemove", (e) => {
-  if (!isResizing) return;
-
-  const rect = chatbot.getBoundingClientRect();
-  let newWidth = rect.width;
-  let newHeight = rect.height;
-  let newLeft = rect.left;
-  let newTop = rect.top;
-
-  if (currentHandle.includes("right")) {
-    newWidth = e.clientX - rect.left;
-  }
-  if (currentHandle.includes("left")) {
-    newWidth = rect.right - e.clientX;
-    newLeft = e.clientX;
-  }
-  if (currentHandle.includes("bottom")) {
-    newHeight = e.clientY - rect.top;
-  }
-  if (currentHandle.includes("top")) {
-    newHeight = rect.bottom - e.clientY;
-    newTop = e.clientY;
-  }
-
-  // Respetar límites
-  if (newWidth > 250 && newWidth < window.innerWidth * 0.9) {
-    chatbot.style.width = newWidth + "px";
-    chatbot.style.left = newLeft + "px";
-  }
-  if (newHeight > 300 && newHeight < window.innerHeight * 0.9) {
-    chatbot.style.height = newHeight + "px";
-    chatbot.style.top = newTop + "px";
-  }
-});
-
-document.addEventListener("mouseup", () => {
-  isResizing = false;
-  currentHandle = null;
-  document.body.style.userSelect = "auto";
-});
-
-// Funcionalidad de emojis en el chatbot
-
-document.addEventListener("DOMContentLoaded", () => {
-  const emojiBtn = document.querySelector(".emoji-btn");
-  const emojiPicker = document.querySelector(".emoji-picker");
-  const userInput = document.getElementById("userInput");
-
-  // Mostrar / ocultar el menú de emojis
-  emojiBtn.addEventListener("click", () => {
-    if (emojiPicker.style.display === "none") {
-      emojiPicker.style.display = "block";
-    } else {
-      emojiPicker.style.display = "none";
+    // Solo mostrar mensaje de bienvenida si aún no se inicializó el chat
+    if (!chatInitialized) {
+        showWelcomeMessage();
+        chatInitialized = true;
     }
-  });
+});
 
-  // Insertar emoji en el input al seleccionarlo
-  emojiPicker.addEventListener("emoji-click", (event) => {
-    userInput.value += event.detail.unicode;
-    emojiPicker.style.display = "none"; // Opcional: cerrar después de elegir
-    userInput.focus();
-  });
 
-  // Cerrar el menú si se hace clic fuera
-  document.addEventListener("click", (e) => {
-    if (!emojiBtn.contains(e.target) && !emojiPicker.contains(e.target)) {
-      emojiPicker.style.display = "none";
-    }
-  });
+
+
+
+
+
+
+    // -------------------- REDIMENSION Y DRAG --------------------
+    let isDragging = false;
+    let isResizing = false;
+    let activeHandle = null;
+
+    let startMouseX, startMouseY;
+    let startWidth, startHeight, startLeft, startTop;
+
+    const minWidth = 250;
+    const minHeight = 350;
+
+    // -------------------- Drag desde header --------------------
+    header.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.resize-handle')) return;
+        isDragging = true;
+        startMouseX = e.clientX;
+        startMouseY = e.clientY;
+        startLeft = appContainer.offsetLeft;
+        startTop = appContainer.offsetTop;
+        document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        isResizing = false;
+        activeHandle = null;
+        document.body.style.userSelect = '';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        const dx = e.clientX - startMouseX;
+        const dy = e.clientY - startMouseY;
+
+        if (isDragging) {
+            let newLeft = startLeft + dx;
+            let newTop = startTop + dy;
+
+            const maxLeft = window.innerWidth - appContainer.offsetWidth;
+            const maxTop = window.innerHeight - appContainer.offsetHeight;
+
+            newLeft = Math.min(Math.max(0, newLeft), maxLeft);
+            newTop = Math.min(Math.max(0, newTop), maxTop);
+
+            appContainer.style.left = newLeft + 'px';
+            appContainer.style.top = newTop + 'px';
+        }
+
+        if (isResizing && activeHandle) {
+            let newWidth = startWidth;
+            let newHeight = startHeight;
+            let newLeft = startLeft;
+            let newTop = startTop;
+
+            const dir = activeHandle.dataset.direction;
+
+            if (dir.includes('right')) newWidth = Math.max(minWidth, startWidth + dx);
+            if (dir.includes('left')) {
+                newWidth = Math.max(minWidth, startWidth - dx);
+                newLeft = startLeft + (startWidth - newWidth);
+                if (newLeft < 0) {
+                    newWidth += newLeft;
+                    newLeft = 0;
+                }
+            }
+
+            if (dir.includes('bottom')) newHeight = Math.max(minHeight, startHeight + dy);
+            if (dir.includes('top')) {
+                newHeight = Math.max(minHeight, startHeight - dy);
+                newTop = startTop + (startHeight - newHeight);
+                if (newTop < 0) {
+                    newHeight += newTop;
+                    newTop = 0;
+                }
+            }
+
+            appContainer.style.width = newWidth + 'px';
+            appContainer.style.height = newHeight + 'px';
+            appContainer.style.left = newLeft + 'px';
+            appContainer.style.top = newTop + 'px';
+        }
+    });
+
+    // -------------------- Inicializar handles --------------------
+    handles.forEach(handle => {
+        handle.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            activeHandle = handle;
+
+            startMouseX = e.clientX;
+            startMouseY = e.clientY;
+
+            startWidth = appContainer.offsetWidth;
+            startHeight = appContainer.offsetHeight;
+            startLeft = appContainer.offsetLeft;
+            startTop = appContainer.offsetTop;
+
+            document.body.style.userSelect = 'none';
+        });
+    });
+    
+    
+
+    // -------------------- BOTON REFRESH --------------------
+    
+    refreshButton.addEventListener('click', () => {
+    chatBox.innerHTML = "";   // Limpiar mensajes
+    chatInput.value = "";     // Limpiar input
+    showWelcomeMessage();     // Opcional: mostrar mensaje de bienvenida
+});
+
 });
