@@ -19,7 +19,19 @@
           <span class="bar"></span>
           <span class="bar"></span>
           <span class="bar"></span>
+
+          <!-- Menú emergente -->
+<div class="menu-popup" id="menu-popup">
+    <button id="btn-cambiar-color">Cambiar color</button>
+    <button id="btn-contacto">Contacto</button>
+    <button id="btn-salir">Salir</button>
+</div>
         </div>
+        
+        
+
+
+
         <div class="back-button hidden" id="back-button">&lt;</div>
         <div class="refresh-button hidden" id="refresh-button">⟳</div>
       </header>
@@ -34,6 +46,36 @@
             class="plant-icon-main"
           />
         </p>
+
+
+
+        <div class="pin-notes-container">
+  <div class="pin-note" data-message="Firma los documentos pendientes.">
+    <p>Sign documents</p>
+  </div>
+  <div class="pin-note" data-message="Recuerda revisar los cursos del semestre.">
+    <p>Select course</p>
+  </div>
+  <div class="pin-note" data-message="Consulta tus horarios actualizados.">
+    <p>Check schedule</p>
+  </div>
+</div>
+
+<!-- Ventana popup para maximizar nota -->
+<div class="pin-note-popup hidden" id="pin-note-popup">
+  
+    <span class="close-popup" id="close-popup">&times;</span>
+    
+    <div class="popup-content">
+        <p id="popup-message"></p>
+    </div>
+</div>
+
+
+
+
+
+
 
         <div class="options-list">
           <div class="option-card" id="btn-chat">

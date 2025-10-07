@@ -18,6 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const hiAnimation = document.getElementById("hi-animation");
     const loadingAnimation = document.getElementById("loading-animation");
     const refreshButton = document.getElementById('refresh-button');
+    const menuPopup = document.getElementById("menu-popup");
+
+    const list = document.querySelector(".options-list");
+
+
+    const pinNotes = document.querySelectorAll('.pin-note');
+const popup = document.getElementById('pin-note-popup');
+const popupMessage = document.getElementById('popup-message');
+const closePopup = document.getElementById('close-popup');
+const pinNotesContainer = document.querySelector('.pin-notes-container');
+
 
     let chatInitialized = false;
     let waitingForLawOption = false;
@@ -47,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         menuIcon.classList.remove('hidden');
         backButton.classList.add('hidden');
         refreshButton.classList.add('hidden');
+        
     };
 
     btnMicrofono.addEventListener('click', () => showScreen(microfonoScreen));
@@ -357,5 +369,39 @@ btnChat.addEventListener('click', () => {
     chatInput.value = "";     // Limpiar input
     showWelcomeMessage();     // Opcional: mostrar mensaje de bienvenida
 });
+
+menuIcon.addEventListener("click", () => {
+    menuPopup.style.display = menuPopup.style.display === "flex" ? "none" : "flex";
+});
+
+
+
+ // ---------------- Pin notes ------------------------------------
+
+
+
+pinNotes.forEach(note => {
+  note.addEventListener('click', () => {
+    const message = note.getAttribute('data-message');
+    popupMessage.textContent = message;
+    popup.classList.remove('hidden');
+  });
+});
+
+closePopup.addEventListener('click', () => {
+  popup.classList.add('hidden');
+});
+
+// Cerrar popup si se hace click fuera del contenido
+popup.addEventListener('click', (e) => {
+  if (e.target === popup) {
+    popup.classList.add('hidden');
+  }
+});
+
+
+
+// ------ Grab de opciones ---
+
 
 });
