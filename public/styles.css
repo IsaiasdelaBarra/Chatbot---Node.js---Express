@@ -17,6 +17,9 @@ body {
     min-height: 100vh;
     background-color: #f0f2f5; /* Un color de fondo claro para la página */
     color: #333; /* Color de texto oscuro para el contenido general */
+    /* Solución CSS para el scroll */
+    touch-action: pan-x pan-y;
+    -ms-touch-action: pan-x pan-y;
 }
 
 .app-container {
@@ -576,6 +579,70 @@ main {
   background: rgba(255,255,255,0.2);
 }
 
+
+
+
+/*
+ * ----------------------------------------------------
+ * RESPONSIVE DESIGN - MEDIA QUERY PARA MÓVILES
+ * ----------------------------------------------------
+ */
+@media (max-width: 600px) {
+    /* 1. Resetear el BODY para ocupar el 100% del viewport */
+    body {
+        /* Quita el centrado y ajusta la altura mínima para ser adaptable */
+        align-items: flex-start; /* Opcional: para que el contenido empiece arriba */
+        padding: 0;
+        margin: 0;
+        min-height: 100vh;
+        
+        /* SOLUCIÓN AL PROBLEMA DE ZOOM/SCROLL EN MÓVILES */
+        /* Evita que los navegadores móviles hagan zoom o scaling de la página,
+           lo que a menudo rompe el desplazamiento. */
+        touch-action: pan-x pan-y;
+        -ms-touch-action: pan-x pan-y;
+    }
+
+    /* 2. El Contenedor Principal (App Container) debe ocupar el 100% */
+    .app-container,
+    .app-container-static {
+        width: 100vw; /* Ancho completo del Viewport */
+        height: 100vh; /* Alto completo del Viewport (toda la pantalla) */
+        max-width: 100%;
+        min-width: unset; /* Elimina la restricción de ancho mínimo */
+        min-height: unset; /* Elimina la restricción de alto mínimo */
+        
+        /* Quita la posición absoluta que tenías, es mejor para móvil */
+        position: relative; 
+        
+        /* Elimina los bordes redondeados en móvil para usar toda la pantalla */
+        border-radius: 0; 
+        
+        /* Quita la sombra para una apariencia más nativa */
+        box-shadow: none; 
+        
+        /* Asegura que el contenido del body no afecte el app-container */
+        padding: 20px 20px 0 20px; /* Reduce el padding si es necesario */
+    }
+    
+    /* 3. Asegura que el contenido dentro del contenedor principal tenga el tamaño adecuado */
+    .screen-principal,
+    .screen-microfono {
+        /* Ajusta el top y bottom para dejar espacio al header */
+        top: 60px; /* Un poco menos de espacio que 70px */
+        bottom: 0px; /* Pega al borde inferior (donde irá el input) */
+        
+        /* Asegura que el resto del contenido se ajuste bien */
+        left: 0;
+        right: 0;
+        padding: 0 20px; /* Padding horizontal para evitar que el contenido toque los bordes */
+    }
+    
+    /* Ajuste específico para el contenedor de chat si lo tienes en otra pantalla */
+    .screen-chat {
+        height: 100%;
+    }
+}
 
 
 
