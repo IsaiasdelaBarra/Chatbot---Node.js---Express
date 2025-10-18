@@ -17,7 +17,9 @@ body {
     min-height: 100vh;
     background-color: #f0f2f5; /* Un color de fondo claro para la página */
     color: #333; /* Color de texto oscuro para el contenido general */
-    /* Solución CSS para el scroll */
+
+
+    /* Solución CSS para el scroll ultimos cambios 7-10 */
     touch-action: pan-x pan-y;
     -ms-touch-action: pan-x pan-y;
 }

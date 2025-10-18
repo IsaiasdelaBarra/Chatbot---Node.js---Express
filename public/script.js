@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.querySelector('header');
     const handles = document.querySelectorAll('.resize-handle');
     const whatsappBtn = document.getElementById("btn-whatsapp");
+    const leyesBtn = document.getElementById("btn-leyes");
     const hiAnimation = document.getElementById("hi-animation");
     const loadingAnimation = document.getElementById("loading-animation");
     const refreshButton = document.getElementById('refresh-button');
@@ -33,6 +34,7 @@ const pinNotesContainer = document.querySelector('.pin-notes-container');
     let chatInitialized = false;
     let waitingForLawOption = false;
     let waitingForLawInput = false;
+    let chatMode = 'ia'; // Puede ser 'ia' o 'leyes'
 
     // -------------------- FUNCIONES PANTALLAS --------------------
     const showScreen = (screen) => {
@@ -59,6 +61,10 @@ const pinNotesContainer = document.querySelector('.pin-notes-container');
         backButton.classList.add('hidden');
         refreshButton.classList.add('hidden');
         
+        // Limpiar el chat al volver al menú principal
+        chatBox.innerHTML = "";
+        chatInput.value = "";
+        chatInitialized = false; // Resetear el estado del chat
     };
 
     btnMicrofono.addEventListener('click', () => showScreen(microfonoScreen));
@@ -102,19 +108,6 @@ const pinNotesContainer = document.querySelector('.pin-notes-container');
         // Asesor
         if (/asesor/i.test(text)) {
             showAdvisorOptions();
-            return;
-        }
-
-        // Leyes
-        if (/\bley(es)?\b/i.test(text)) {
-            waitingForLawOption = true;
-            showLawsChoice();
-            return;
-        }
-
-        const leyMatch = text.match(/ley\s+(\d+\.?\d*)/i);
-        if (leyMatch) {
-            await fetchSpecificLaw(leyMatch[1].replace(/\./g, ""));
             return;
         }
 
@@ -245,13 +238,26 @@ if (whatsappBtn) {
 // -------------------- APERTURA DEL CHAT --------------------
 btnChat.addEventListener('click', () => {
     showScreen(chatScreen);
-
-    // Solo mostrar mensaje de bienvenida si aún no se inicializó el chat
-    if (!chatInitialized) {
-        showWelcomeMessage();
-        chatInitialized = true;
-    }
+    chatMode = 'ia';
+    // Limpiar el chat al cambiar a modo IA
+    chatBox.innerHTML = '';
+    chatInput.value = '';
+    showWelcomeMessage();
+    chatInitialized = true;
 });
+
+// -------------------- MANEJO DE LEYES --------------------
+if (leyesBtn) {
+    leyesBtn.addEventListener('click', () => {
+        showScreen(chatScreen);
+        chatMode = 'leyes';
+        // Limpiar el chat al cambiar a modo leyes
+        chatBox.innerHTML = '';
+        chatInput.value = '';
+        chatInitialized = true;
+        showLawsChoice(); // Mostrar opciones de leyes
+    });
+}
 
 
 
@@ -365,10 +371,16 @@ btnChat.addEventListener('click', () => {
     // -------------------- BOTON REFRESH --------------------
     
     refreshButton.addEventListener('click', () => {
-    chatBox.innerHTML = "";   // Limpiar mensajes
-    chatInput.value = "";     // Limpiar input
-    showWelcomeMessage();     // Opcional: mostrar mensaje de bienvenida
-});
+        chatBox.innerHTML = "";   // Limpiar mensajes
+        chatInput.value = "";     // Limpiar input
+        
+        // Mostrar contenido según el modo actual
+        if (chatMode === 'leyes') {
+            showLawsChoice();     // Mostrar opciones de leyes
+        } else {
+            showWelcomeMessage(); // Mostrar mensaje de bienvenida para modo IA
+        }
+    });
 
 menuIcon.addEventListener("click", () => {
     menuPopup.style.display = menuPopup.style.display === "flex" ? "none" : "flex";
