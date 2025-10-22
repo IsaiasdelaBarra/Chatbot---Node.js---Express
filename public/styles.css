@@ -25,9 +25,9 @@ body {
 }
 
 .app-container {
-    width: 350px;
-    height: 500px;
-    background: url("iconos/Green-Background-New.png");
+    width: 402px;
+    height: 575px;
+    background: url("iconos/Shiny\ Overlay.svg");
     background-size: cover;
     background-position: center;
     border-radius: 20px;
@@ -38,8 +38,8 @@ body {
     flex-direction: column;
     position: absolute;
     overflow: hidden; /* 🔥 Evita que los contenedores se salgan o “corten” */
-    min-width: 331px;
-    min-height: 438px;
+    min-width: 354px;
+    min-height: 501px;
 }
 
 header {
@@ -124,6 +124,8 @@ main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+
+    justify-content: space-between;
 }
 
 
@@ -138,6 +140,8 @@ main {
   /* El padding-right es clave para dar espacio a la barra, si no hay padding,
      la barra se pegará al borde del contenedor y puede verse mal. */
   padding-right: 10px; /* Añade espacio para la scrollbar */
+
+  margin-top: auto;
 
   /* ---------------------------------------------------- */
   /* --- PERSONALIZACIÓN DEL SCROLLBAR (CHROME, SAFARI, EDGE) --- */
@@ -246,46 +250,80 @@ main {
 /* --------------------- */
 
 
-
-
-
 .pin-notes-container {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-evenly; /* 💡 distribuye el espacio de forma igual entre y alrededor de las notas */
-  align-items: center;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr; /* Columna izquierda más ancha */
+  grid-template-rows: 1fr 1fr; /* Dos filas iguales */
+  gap: 10px;
   width: 100%;
+  margin-bottom: 20px;
 }
 
+/* --- Estilo general de cada nota --- */
 .pin-note {
-  background: #fff8a1;
+  position: relative;
   border: 1px solid #f2e17c;
-  padding: 10px;
-  width: 60px;
-  height: 60px;
-  border-radius: 10px;
-  box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
-  cursor: pointer;
+  border-radius: 15px;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
   text-align: center;
-  position: relative;
+  cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
+  font-size: 0.85rem;
+  padding: 10px;
+  background-color: transparent;
+  overflow: hidden;
 }
 
+/* Capa semitransparente para mejorar legibilidad del texto */
+.pin-note::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 15px;
+  z-index: 0;
+}
+
+/* Texto encima del fondo */
+.pin-note p {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+}
+
+/* La primera nota ocupa el alto completo de la izquierda */
+.pin-note:nth-child(1) {
+  grid-row: 1 / span 2;
+  background-image: url('iconos/Fondo1.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.pin-note:nth-child(2) {
+  background-image: url('iconos/Fondo2.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.pin-note:nth-child(3) {
+  background-image: url('iconos/Fondo3.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Efecto hover */
 .pin-note:hover {
   transform: translateY(-5px);
-  box-shadow: 4px 6px 12px rgba(0,0,0,0.3);
+  box-shadow: 4px 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-
-
-
-/* Popup de la nota */
+/* --- Popup de la nota --- */
 .pin-note-popup {
   position: fixed;
   top: 50%;
@@ -320,7 +358,6 @@ main {
   font-size: 1.5rem;
   cursor: pointer;
 }
-
 
 
 
