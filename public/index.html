@@ -11,7 +11,10 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
     />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
   </head>
   <body>
     <div class="app-container">
@@ -22,16 +25,33 @@
           <span class="bar"></span>
 
           <!-- Menú emergente -->
-<div class="menu-popup" id="menu-popup">
-    <button id="btn-cambiar-color">Cambiar color</button>
-    <button id="btn-contacto">Contacto</button>
-    <button id="btn-salir">Salir</button>
-</div>
+          <div class="menu-popup" id="menu-popup">
+            <div class="profile-bubble" id="profile-bubble">
+              <div class="profile-avatar">👤</div>
+              <div class="profile-info">
+                <span id="profile-role">Usuario común</span>
+              </div>
+            </div>
+
+            <hr class="menu-divider" />
+
+            <button id="btn-cambiar-color">Iniciar sesion</button>
+            <button id="btn-contacto">Contacto</button>
+            <button id="btn-salir">Salir</button>
+          </div>
+
+          <!-- 🔒 Ventana de inicio de sesión -->
+          <div class="login-popup" id="login-popup">
+            <div class="login-content">
+              <h3>Iniciar sesión</h3>
+              <input type="text" id="login-user" placeholder="Usuario" />
+              <input type="password" id="login-pass" placeholder="Contraseña" />
+              <div id="login-error" class="login-error"></div>
+              <button id="login-btn">Entrar</button>
+              <button id="login-cancel">Cancelar</button>
+            </div>
+          </div>
         </div>
-        
-        
-
-
 
         <div class="back-button hidden" id="back-button">&lt;</div>
         <div class="refresh-button hidden" id="refresh-button">⟳</div>
@@ -48,35 +68,33 @@
           />
         </p>
 
-
-
         <div class="pin-notes-container">
-  <div class="pin-note" data-message="Firma los documentos pendientes.">
-    <p>Sign documents</p>
-  </div>
-  <div class="pin-note" data-message="Recuerda revisar los cursos del semestre.">
-    <p>Select course</p>
-  </div>
-  <div class="pin-note" data-message="Consulta tus horarios actualizados.">
-    <p>Check schedule</p>
-  </div>
-</div>
+          <div class="pin-note" data-message="Firma los documentos pendientes.">
+            <p>Sign documents</p>
+          </div>
+          <div
+            class="pin-note"
+            data-message="Recuerda revisar los cursos del semestre."
+          >
+            <p>Select course</p>
+          </div>
+          <div
+            class="pin-note"
+            data-message="Consulta tus horarios actualizados."
+          >
+            <p>Check schedule</p>
+          </div>
+        </div>
 
-<!-- Ventana popup para maximizar nota -->
-<div class="pin-note-popup hidden" id="pin-note-popup">
-  
-    <span class="close-popup" id="close-popup">&times;</span>
-    
-    <div class="popup-content">
-        <p id="popup-message"></p>
-    </div>
-</div>
+        <!-- Ventana popup para maximizar nota -->
+        <div class="pin-note-popup hidden" id="pin-note-popup">
+           
+          <span class="close-popup" id="close-popup">&times;</span>
 
-
-
-
-
-
+          <div class="popup-content">
+            <p id="popup-message"></p>
+          </div>
+        </div>
 
         <div class="options-list">
           <div class="option-card" id="btn-chat">
@@ -103,7 +121,6 @@
             <img src="iconos/gmail.png" alt="Correo" class="option-icon" />
             <p>Manda un correo electronico</p>
           </div>
-          
         </div>
       </div>
 
@@ -120,8 +137,6 @@
       <div class="screen-chat hidden" id="chat-screen">
         <div class="chat-box" id="chat-box">
           <!-- Aquí aparecerán los mensajes de la ventana de chat -->
-
-          
         </div>
 
         <div class="chat-input-area">
