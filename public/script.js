@@ -285,8 +285,10 @@ const btnConfig = document.getElementById("btn-cambiar-color");
   let startMouseX, startMouseY;
   let startWidth, startHeight, startLeft, startTop;
 
-  const minWidth = 250;
-  const minHeight = 350;
+  const minWidth = 354;
+  const minHeight = 501;
+  const maxWidth = 700;   
+const maxHeight = 600;
 
   // -------------------- Drag desde header --------------------
   header.addEventListener("mousedown", (e) => {
@@ -325,39 +327,59 @@ const btnConfig = document.getElementById("btn-cambiar-color");
     }
 
     if (isResizing && activeHandle) {
-      let newWidth = startWidth;
-      let newHeight = startHeight;
-      let newLeft = startLeft;
-      let newTop = startTop;
+  let newWidth = startWidth;
+  let newHeight = startHeight;
+  let newLeft = startLeft;
+  let newTop = startTop;
 
-      const dir = activeHandle.dataset.direction;
+  const dir = activeHandle.dataset.direction;
 
-      if (dir.includes("right")) newWidth = Math.max(minWidth, startWidth + dx);
-      if (dir.includes("left")) {
-        newWidth = Math.max(minWidth, startWidth - dx);
-        newLeft = startLeft + (startWidth - newWidth);
-        if (newLeft < 0) {
-          newWidth += newLeft;
-          newLeft = 0;
-        }
-      }
+  // --- Horizontal ---
+  if (dir.includes("right")) {
+    const tentativeWidth = startWidth + dx;
+    newWidth = Math.max(minWidth, Math.min(maxWidth, tentativeWidth));
+  }
 
-      if (dir.includes("bottom"))
-        newHeight = Math.max(minHeight, startHeight + dy);
-      if (dir.includes("top")) {
-        newHeight = Math.max(minHeight, startHeight - dy);
-        newTop = startTop + (startHeight - newHeight);
-        if (newTop < 0) {
-          newHeight += newTop;
-          newTop = 0;
-        }
-      }
-
-      appContainer.style.width = newWidth + "px";
-      appContainer.style.height = newHeight + "px";
-      appContainer.style.left = newLeft + "px";
-      appContainer.style.top = newTop + "px";
+  if (dir.includes("left")) {
+    const tentativeWidth = startWidth - dx;
+    if (tentativeWidth >= minWidth && tentativeWidth <= maxWidth) {
+      newWidth = tentativeWidth;
+      newLeft = startLeft + dx;
+    } else if (tentativeWidth < minWidth) {
+      newWidth = minWidth;
+      newLeft = startLeft + (startWidth - minWidth);
+    } else {
+      newWidth = maxWidth;
+      newLeft = startLeft + (startWidth - maxWidth);
     }
+  }
+
+  // --- Vertical ---
+  if (dir.includes("bottom")) {
+    const tentativeHeight = startHeight + dy;
+    newHeight = Math.max(minHeight, Math.min(maxHeight, tentativeHeight));
+  }
+
+  if (dir.includes("top")) {
+    const tentativeHeight = startHeight - dy;
+    if (tentativeHeight >= minHeight && tentativeHeight <= maxHeight) {
+      newHeight = tentativeHeight;
+      newTop = startTop + dy;
+    } else if (tentativeHeight < minHeight) {
+      newHeight = minHeight;
+      newTop = startTop + (startHeight - minHeight);
+    } else {
+      newHeight = maxHeight;
+      newTop = startTop + (startHeight - maxHeight);
+    }
+  }
+
+  appContainer.style.width = newWidth + "px";
+  appContainer.style.height = newHeight + "px";
+  appContainer.style.left = newLeft + "px";
+  appContainer.style.top = newTop + "px";
+}
+
   });
 
   // -------------------- Inicializar handles --------------------
@@ -421,64 +443,78 @@ const btnConfig = document.getElementById("btn-cambiar-color");
 
   // -------------------- LOGIN ADMINISTRADOR --------------------
 
-let isAdmin = false;
+// Estado inicial basado en localStorage
+let isAdmin = localStorage.getItem("rol") === "admin";
 
-  // Mostrar popup de login al presionar Configuración
-  btnConfig.addEventListener("click", () => {
-    if (isAdmin) {
-      alert("✅ Ya estás logueado como administrador. Accediendo al panel de configuración...");
-      // Aquí más adelante mostraremos la página de configuración
-      return;
-    }
-    loginPopup.style.display = "flex";
-  });
+// Mostrar popup de login al presionar Configuración
+btnConfig.addEventListener("click", () => {
+  if (isAdmin) {
+    alert("✅ Ya estás logueado como administrador. Accediendo al panel de configuración...");
+    window.location.href = "admin.html"; // Redirige al panel admin
+    return;
+  }
+  loginPopup.style.display = "flex";
+});
 
-  // Botón de cancelar en el login
-  loginCancel.addEventListener("click", () => {
+// Botón de cancelar en el login
+loginCancel.addEventListener("click", () => {
+  loginPopup.style.display = "none";
+  loginError.textContent = "";
+  loginUser.value = "";
+  loginPass.value = "";
+});
+
+// Validar credenciales
+loginBtn.addEventListener("click", () => {
+  const user = loginUser.value.trim();
+  const pass = loginPass.value.trim();
+
+  if (user === "admin" && pass === "1234") {
+    isAdmin = true;
+    localStorage.setItem("rol", "admin"); // Guardar sesión
+    profileRole.textContent = "Administrador";
     loginPopup.style.display = "none";
     loginError.textContent = "";
-    loginUser.value = "";
-    loginPass.value = "";
-  });
+    alert("🔓 Acceso concedido: Administrador");
 
-  // Validar credenciales
-  loginBtn.addEventListener("click", () => {
-    const user = loginUser.value.trim();
-    const pass = loginPass.value.trim();
+    // Redirigir directamente al panel admin
+    window.location.href = "admin.html";
+  } else {
+    loginError.textContent = "❌ Credenciales incorrectas";
+  }
+});
 
-    if (user === "admin" && pass === "1234") {
-      isAdmin = true;
-      profileRole.textContent = "Administrador";
-      loginPopup.style.display = "none";
-      loginError.textContent = "";
-      alert("🔓 Acceso concedido: Administrador");
-    } else {
-      loginError.textContent = "❌ Credenciales incorrectas";
+// Botón "Salir"
+btnSalir.addEventListener("click", () => {
+  if (isAdmin) {
+    const confirmLogout = confirm("¿Deseas cerrar sesión como administrador?");
+    if (confirmLogout) {
+      isAdmin = false;
+      localStorage.removeItem("rol"); // Borrar sesión
+      profileRole.textContent = "Usuario común";
+      alert("🔒 Sesión cerrada. Has vuelto al modo usuario común.");
     }
-  });
+  } else {
+    alert("👋 Saliendo del menú...");
+    // Aquí podrías cerrar el menú popup si lo estás mostrando dinámicamente
+  }
+});
 
-  // Botón "Salir"
-  btnSalir.addEventListener("click", () => {
-    if (isAdmin) {
-      const confirmLogout = confirm("¿Deseas cerrar sesión como administrador?");
-      if (confirmLogout) {
-        isAdmin = false;
-        profileRole.textContent = "Usuario común";
-        alert("🔒 Sesión cerrada. Has vuelto al modo de usuario común.");
-      }
-    } else {
-      alert("👋 Saliendo del menú...");
-      // Aquí podrías cerrar el menú popup si lo estás mostrando dinámicamente
-    }
-  });
+// Cerrar popup haciendo clic fuera
+window.addEventListener("click", (e) => {
+  if (e.target === loginPopup) {
+    loginPopup.style.display = "none";
+  }
+});
 
-  // Cerrar popup haciendo clic fuera
-  window.addEventListener("click", (e) => {
-    if (e.target === loginPopup) {
-      loginPopup.style.display = "none";
-    }
-  });
-
+// Al cargar la página, actualizar visualmente el rol
+document.addEventListener("DOMContentLoaded", () => {
+  if (isAdmin) {
+    profileRole.textContent = "Administrador";
+  } else {
+    profileRole.textContent = "Usuario común";
+  }
+});
 });
 
 

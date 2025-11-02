@@ -1,0 +1,436 @@
+:root {
+    /* Las variables son las mismas, pero el JS las sobreescribe */
+    --accent: #6c2bd9; /* Púrpura */
+    --accent-secondary: #5c24b8;
+    --bg-light: #ffffff;
+    --bg-dark: #18181b;
+    --text-light: #222;
+    --text-dark: #f5f5f5;
+    --bubble-bot-light: #eaeaea;
+    --bubble-user: #955cca; /* Color de burbuja de usuario por defecto */
+    --bubble-bot-dark: #3a3a3d; /* Calculado en JS, pero definido aquí como fallback */
+
+    /* Variables principales de styles.css para la preview */
+    --gradient-start: #6ac56c;
+    --gradient-end: #3d8f4c;
+    --text-color: #fff;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-light);
+    color: var(--text-light);
+    display: flex;
+    height: 100vh;
+    overflow: hidden; 
+}
+
+/* --- Modo Oscuro (Dark Mode) --- */
+body[data-theme="dark"] {
+    background: var(--bg-dark);
+    color: var(--text-dark);
+}
+
+body[data-theme="dark"] .sidebar {
+    background: var(--accent);
+}
+
+body[data-theme="dark"] .settings-panel,
+body[data-theme="dark"] .settings-panel-left {
+    background: var(--bg-dark);
+}
+
+body[data-theme="dark"] .theme-option {
+    border: 2px solid #555;
+    color: var(--text-dark);
+    background: #28282b;
+}
+
+body[data-theme="dark"] .theme-option.active {
+    border-color: var(--accent);
+}
+
+body[data-theme="dark"] .color-option-border.active {
+    border-color: var(--text-dark);
+}
+
+/* Botón de restablecimiento en Dark Mode */
+body[data-theme="dark"] .reset-button {
+    background: #28282b;
+    border-color: #555;
+    color: var(--text-dark);
+}
+body[data-theme="dark"] .reset-button:hover {
+    background: #333;
+}
+
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 90px;
+    background: var(--accent); /* Fondo con color acento */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 10px 20px;
+    gap: 15px;
+    position: sticky;
+    top: 0;
+    left: 0;
+    height: 100vh;
+}
+
+.logo-container {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 20px;
+    /* Simula el logo circular */
+    background: white; 
+    border-radius: 50%;
+}
+
+.sidebar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 12px;
+    border-radius: 12px;
+    color: #f5f5f5; /* Íconos claros */
+    opacity: 0.6;
+    transition: opacity 0.3s, background 0.3s;
+}
+
+.sidebar button:hover {
+    opacity: 1;
+}
+
+.sidebar button.active {
+    opacity: 1;
+    background: var(--accent-secondary);
+}
+
+/* --- Main content (Ahora settings-container) --- */
+.settings-container { /* ANTES .main */
+    flex: 1;
+    display: flex;
+    padding: 60px 80px 40px 80px;
+    gap: 60px;
+    overflow-y: hidden; 
+}
+
+/* --- Left panel (Settings) --- */
+.settings-panel-left {
+    flex: 1; 
+    display: flex; 
+    flex-direction: column;
+    max-width: 500px;
+    padding-right: 20px; /* Separación visual del scrollbar */
+}
+
+.settings-panel {
+    flex-grow: 1;
+    overflow-y: auto; /* Permite scroll solo en el panel de opciones */
+    
+}
+
+.settings-panel h2 {
+    font-size: 28px;
+    margin-bottom: 40px;
+}
+
+.settings-panel h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.title-description {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.theme-options {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.theme-option {
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 15px 25px;
+    min-width: 120px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s, color 0.3s, background 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-option.active {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.theme-option span {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.color-section {
+    margin-bottom: 30px;
+}
+
+.color-options {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.color-option-border {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    padding: 3px;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.color-option {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.color-option-border.active {
+    border-color: #000;
+    transform: scale(1.1);
+}
+
+/* Botón de Restablecimiento */
+.reset-button {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-light);
+    background: #f0f0f0;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    align-self: flex-start;
+}
+
+.reset-button:hover {
+    background: #e0e0e0;
+    border-color: #aaa;
+}
+
+/* --- Chat preview (Derecha) - ESTILOS ACTUALIZADOS --- */
+.chat-preview-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;
+    overflow-y: auto;
+}
+
+/* Contenedor de la aplicación de previsualización (Copiado de styles.css .app-container) */
+.app-container.preview-app-container {
+    width: 402px;
+    height: 575px;
+    /* FIX: Asegurado de que el nombre del archivo no tenga caracteres de escape */
+    background: url("iconos/Shiny Overlay.svg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden; 
+    min-width: 354px;
+    min-height: 501px;
+}
+
+/* Estilos del Encabezado de la Vista Previa (Copiado de styles.css header) */
+.app-container.preview-app-container header {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    color: white;
+    cursor: grab;
+    flex-shrink: 0;
+    align-items: flex-start; 
+    background: none;
+    box-shadow: none;
+}
+
+.app-container.preview-app-container header:active {
+    cursor: grabbing;
+}
+
+/* Estilos de ícono de menú de styles.css */
+.app-container.preview-app-container .menu-icon {
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+}
+
+.app-container.preview-app-container .menu-icon .bar {
+    display: block;
+    width: 20px;
+    height: 3px;
+    background: var(--text-color, #fff); 
+    margin: 3px 0;
+    border-radius: 2px;
+}
+
+/* Estilos de la Pantalla de Chat (Copiado de styles.css .screen-chat) */
+.app-container.preview-app-container .screen-chat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: white;
+    overflow: hidden;
+    background: none; 
+}
+
+/* Estilos de la Caja de Chat (Copiado de styles.css .chat-box) */
+.app-container.preview-app-container .chat-box {
+    flex: 1;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Estilos base del Mensaje (Copiado de styles.css .message) */
+.app-container.preview-app-container .message {
+    padding: 8px 12px;
+    border-radius: 12px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+/* Mensajes del bot (Copiado de styles.css .message.bot) */
+.app-container.preview-app-container .message.bot {
+    background: #E5E5EA; 
+    color: #000000;
+    align-self: flex-start;
+    text-align: left;
+    border-radius: 18px 18px 18px 5px;
+    padding: 8px 12px;
+}
+
+/* Mensajes del usuario (Copiado de styles.css .message.user) */
+.app-container.preview-app-container .message.user {
+    background: #955cca; 
+    color: #FFFFFF;
+    align-self: flex-end;
+    text-align: right;
+    border-radius: 18px 18px 5px 18px;
+}
+
+/* Input Area (Copiado de styles.css .chat-input-area) */
+.app-container.preview-app-container .chat-input-area {
+    flex-shrink: 0;
+    display: flex;
+    gap: 10px;
+}
+
+/* Input Field (Copiado de styles.css .chat-input-area input) */
+.app-container.preview-app-container .chat-input-area input {
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+}
+
+/* Send Button (Copiado de styles.css .chat-input-area button) */
+.app-container.preview-app-container .chat-input-area button {
+    background: #6ac56c;
+    border: none;
+    border-radius: 10px;
+    padding: 0 15px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+
+/* Botones de opciones en chat (Copiado de styles.css .chat-options) */
+.app-container.preview-app-container .chat-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Cada opción (Copiado de styles.css .chat-option) */
+.app-container.preview-app-container .chat-option {
+    background: rgba(244, 67, 54, 0.8);
+    padding: 8px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    color: white;
+    font-size: 0.9rem;
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+.app-container.preview-app-container .chat-option:hover {
+    background: rgba(244, 67, 54, 1);
+    transform: translateY(-2px);
+}
+
+/* Botón de recarga (Copiado de styles.css .refresh-button) */
+.app-container.preview-app-container .refresh-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: white;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.app-container.preview-app-container .refresh-button:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Estilo de Dark Mode original para el bot (Asegurando que se mantenga la funcionalidad de modo oscuro del panel) */
+body[data-theme="dark"] .app-container.preview-app-container .message.bot {
+    background: var(--bubble-bot-dark); 
+    color: var(--text-dark);
+    /* Restaurar propiedades de borde y alineación */
+    align-self: flex-start;
+    text-align: left;
+    border-radius: 18px 18px 18px 5px;
+    padding: 8px 12px;
+}

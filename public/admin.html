@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Panel de Administración - Agrobot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="styles.css" /> 
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container"></div>
+        <button class="active" title="Apariencia">🎨</button>
+        <button title="Mensajes predeterminados">💬</button>
+        <button title="Configuraciones">⚙️</button>
+        <button title="Salir" id="logout-btn">🚪</button> 
+    </div>
+
+    <div class="settings-container"> 
+        
+        <div class="settings-panel-left">
+            <div class="settings-panel">
+                <h2>Change the colors to customize your bot</h2>
+                
+                <h3>Theme</h3>
+                <div class="theme-options">
+                    <div class="theme-option active" data-theme="light">
+                        <span>🌞</span> Light
+                    </div>
+                    <div class="theme-option" data-theme="dark">
+                        <span>🌜</span> Dark
+                    </div>
+                </div>
+
+                <h3>Color</h3>
+                
+                <div class="color-section">
+                    <div class="title-description">Accent color (Usado en botones, sidebar, etc.)</div>
+                    <div class="color-options" id="accent-color-options">
+                        <div class="color-option-border active" data-color="#6c2bd9" data-variable="--accent">
+                            <div class="color-option" style="background:#6c2bd9"></div>
+                        </div>
+                        <div class="color-option-border" data-color="#9a67ea" data-variable="--accent">
+                            <div class="color-option" style="background:#9a67ea"></div>
+                        </div>
+                        <div class="color-option-border" data-color="#f97316" data-variable="--accent">
+                            <div class="color-option" style="background:#f97316"></div>
+                        </div>
+                        <div class="color-option-border" data-color="#ef4444" data-variable="--accent">
+                            <div class="color-option" style="background:#ef4444"></div>
+                        </div>
+                        <div class="color-option-border" data-color="#facc15" data-variable="--accent">
+                            <div class="color-option" style="background:#facc15"></div>
+                        </div>
+                        <div class="color-option-border" data-color="#10b981" data-variable="--accent">
+                            <div class="color-option" style="background:#10b981"></div>
+                        </div>
+                        <div class="color-option-border" data-color="#3b82f6" data-variable="--accent">
+                            <div class="color-option" style="background:#3b82f6"></div>
+                        </div>
+                        <div class="color-option-border" data-color="#3b82f6" data-variable="--accent">
+                            <div class="color-option" style="background:conic-gradient(red, yellow, lime, aqua, blue, magenta, red); display: flex; align-items: center; justify-content: center; font-size: 18px;">🎨</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="color-section">
+                    <div class="title-description">Bot messages background (Variable: --bubble-bot-light)</div>
+                    <div class="color-options" id="bot-message-options">
+                        <div class="color-option-border active" data-color="#E5E5EA" data-variable="--bubble-bot-light">
+                            <div class="color-option" style="background:#E5E5EA; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                                ✅
+                            </div>
+                        </div>
+                        <div class="color-option-border" data-color="#e2e8f0" data-variable="--bubble-bot-light">
+                            <div class="color-option" style="background:#e2e8f0"></div>
+                        </div>
+                           <div class="color-option-border" data-color="#ffffff" data-variable="--bubble-bot-light">
+                            <div class="color-option" style="background:#ffffff"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="color-section">
+                    <div class="title-description">User messages background (Variable: --bubble-user)</div>
+                    <div class="color-options" id="user-message-options">
+                        <div class="color-option-border active" data-color="#955cca" data-variable="--bubble-user">
+                            <div class="color-option" style="background:#955cca"></div>
+                        </div>
+                        <div class="color-option-border" data-color="#3b82f6" data-variable="--bubble-user">
+                            <div class="color-option" style="background:#3b82f6"></div>
+                        </div>
+                        <div class="color-option-border" data-color="#10b981" data-variable="--bubble-user">
+                            <div class="color-option" style="background:#10b981"></div>
+                        </div>
+                        <div class="color-option-border" data-color="#f97316" data-variable="--bubble-user">
+                            <div class="color-option" style="background:#f97316"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="reset-defaults-btn" class="reset-button">
+                Restablecer a Valores Predeterminados
+            </button>
+        </div>
+
+        <div class="chat-preview-container">
+            <div class="app-container preview-app-container">
+                <header> <div class="menu-icon">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </div>
+                    
+        <div class="back-button hidden" id="back-button">&lt;</div>
+        <div class="refresh-button hidden" id="refresh-button">⟳</div>
+                </header>
+
+                <div class="screen-chat"> 
+                    <div class="chat-box" id="preview-chat-box">
+                        <div class="message bot">Hola! Bienvenido al panel de configuración.</div>
+                        <div class="message user">El color de mis mensajes se ve genial.</div>
+                        
+                        <div class="chat-options">
+                            <div class="chat-option option-preview">Opción 1 de muestra</div>
+                            <div class="chat-option option-preview">Opción 2 de muestra</div>
+                        </div>
+                        
+                        <div class="message bot">¡El color de las burbujas del Bot ha cambiado!</div>
+                        <div class="message user">El botón de envío y el menú también se actualizaron.</div>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <input type="text" placeholder="Escribe un mensaje..." disabled />
+                        <button class="send-btn-preview" disabled>Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
